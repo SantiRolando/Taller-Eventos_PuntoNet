@@ -1,0 +1,77 @@
+﻿
+/* Reset de márgenes y paddings del navegador */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* NavBar */
+
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #202020;
+    color: white;
+    padding: 0.5rem 2rem;
+}
+
+.navbar-links {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+}
+
+    .navbar-links a {
+        color: white;
+        text-decoration: none;
+    }
+
+.navbar-buttons button {
+    margin-left: 0.5rem;
+    padding: 0.4rem 1rem;
+    border: none;
+    border-radius: 5px;
+}
+
+.btn-login {
+    background-color: #ccc;
+    color: black;
+}
+
+.btn-register {
+    background-color: #e53935;
+    color: white;
+}
+
+/* Footer */
+
+.footer {
+    background-color: #202020;
+    color: #ccc;
+    text-align: center;
+    padding: 1.5rem 0;
+}
+
+.footer-top {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.footer-icons a {
+    color: #ccc;
+    margin: 0 0.5rem;
+    font-size: 1.2rem;
+}
+
+.footer-contact {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+}
