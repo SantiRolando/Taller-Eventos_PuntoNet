@@ -1,4 +1,20 @@
-﻿<!DOCTYPE html>
+﻿@using Taller_Eventos_PuntoNet.Components.Layout
+
+<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p>Lo sentimos, la página no existe.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
+
+<HeadOutlet />
+
+
+
 <html lang="en">
 
 <head>
@@ -9,11 +25,11 @@
     <link rel="stylesheet" href="app.css" />
     <link rel="stylesheet" href="Taller Eventos_PuntoNet.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
-    <HeadOutlet />
+    
 </head>
 
 <body>
-    <Routes />
+    
     <script src="_framework/blazor.web.js"></script>
 </body>
 

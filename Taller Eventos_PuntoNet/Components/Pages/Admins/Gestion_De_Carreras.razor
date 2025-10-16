@@ -1,0 +1,150 @@
+﻿@page "/GestorCarreara"
+@using System.Diagnostics
+<link href="./css/site.css" rel="stylesheet" />
+
+<PageTitle>Gestion de Carreras</PageTitle>
+
+
+<div class="page-container ml-4 d-flex">
+
+    <!--Contenido SideBar-->
+
+    <div class="d-flex flex-column align-items-start justify-content-center" style="height: 100vh;">
+        <div class=" m-4 bg-light p-4 rounded-3 w-100 shadow-lg p-3 mb-5 bg-body-tertiary rounded border" style="max-width: 300px; min-height: 400px;">
+
+            <h5 class="text-center fw-bold mb-4">Opciones</h5>
+
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link active d-flex align-items-center">
+                        🏁 <span class="ms-2">Gestión de Carreras</span>
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link text-dark d-flex align-items-center">
+                        👟 <span class="ms-2">Gestión de Corredores</span>
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link text-dark d-flex align-items-center">
+                        👤 <span class="ms-2">Mi Perfil</span>
+                    </a>
+                </li>
+            </ul>
+
+            <hr>
+
+            <div class="mt-auto">
+                <button class="btn btn-outline-danger w-100 mb-2 d-flex align-items-center justify-content-center">
+                    🚪 <span class="ms-2">Salir</span>
+                </button>
+                <button class="btn btn-outline-success w-100 d-flex align-items-center justify-content-center">
+                    🏠 <span class="ms-2">Home</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!--Contenido Main-->
+    <section class="main-content flex-grow-1 p-4">
+        <h1 class="Title"> Gestion de Carreras</h1>
+
+        <!--Barra de Busqueda-->
+        <div class="input-group rounded-pill shadow-sm" style="max-width: 300px;">
+            <span class="input-group-text bg-white border-0" id="basic-addon1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-search" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0">
+                    </path>
+                </svg>
+            </span>
+            <input type="text" class="form-control border-0" placeholder="Ingrese una carrera"
+                   aria-label="Input group example" aria-describedby="basic-addon1">
+        </div>
+
+
+        <!--Lista de Carreras-->
+        <div class="Lista-de-Carrera mt-2">
+            <!--Carta de las Carreras-->
+            @foreach (var carrera in carrerasFiltradas)
+            {
+                <div class=" card mb-3 border shadow" style="max-width: auto; border-bottom: 2px solid #f0f0f0; ">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="https://municipiob.montevideo.gub.uy/sites/municipiob/files/styles/620x410/public/Nota%20web%20%283%29_13.png?itok=DcqIlwRS" class="img-fluid rounded-start" alt="...">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h3 class="card-title">@carrera.Nombre</h3>
+                                <p><i>📅</i><b>Fecha:</b>@carrera.Fecha.ToShortDateString()</p>
+                                <p><i>🏃‍♂️</i><b>Corredores:</b> @carrera.Corredores</p>
+                                <p><i>📏</i><b>Distancia:</b> @carrera.Distancia km</p>
+                                <p>
+                                    <b>Status:</b>
+                                    <span class="@((carrera.Abierta ? "status-abierta" : "status-cerrada"))" @(carrera.abierta ? "Abierta : Cerrada" )>
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-lg rounded-pill m-3 shadow" style="color: white; background:#007bff">Opciones</button>
+                                <button class="btn-lg rounded-pill btn-outline-danger shadow">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            }
+        </div>
+
+
+
+        <!--Paginacion-->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-end">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">Previous</a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                </li>
+            </ul>
+        </nav>
+
+
+    </section>
+
+
+</div>
+
+
+
+
+@code {
+    private string searchTerm = "";
+
+    private List<Carrera> carreras = new()
+    {
+        new Carrera { Nombre = "Carrera 1", Fecha = DateTime.Now, Corredores = 50, Distancia = 5, Abierta = true },
+        new Carrera { Nombre = "Carrera 2", Fecha = DateTime.Now.AddDays(7), Corredores = 70, Distancia = 10, Abierta = false },
+        new Carrera { Nombre = "Carrera 3", Fecha = DateTime.Now.AddDays(14), Corredores = 30, Distancia = 7, Abierta = true },
+    };
+
+    private IEnumerable<Carrera> carrerasFiltradas => string.IsNullOrWhiteSpace(searchTerm)
+        ? carreras
+        : carreras.Where(c => c.Nombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+
+    public class Carrera
+    {
+        public string Nombre { get; set; }
+        public DateTime Fecha { get; set; }
+        public int Corredores { get; set; }
+        public int Distancia { get; set; }
+        public bool Abierta { get; set; }
+    }
+}
