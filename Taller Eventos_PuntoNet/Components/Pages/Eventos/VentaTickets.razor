@@ -1,0 +1,140 @@
+﻿@page "/eventos/{id}/comprar"
+
+@* PSEUDOCÓDIGO (plan detallado)
+   1. Recibir el parámetro `id` como string (Blazor siempre pasa string).
+   2. Intentar parsear `id` a `int` y guardarlo en `IdEvento`.
+   3. Buscar en la lista `eventos` un `Evento` cuyo `Id` coincida con `IdEvento`.
+   4. Si se encuentra:
+        - Asignar a `eventoSeleccionado`.
+        - Mostrar la información del evento: título, descripción, fecha e imagen.
+        - Mostrar un botón para "Comprar" (solo visual).
+      Si no se encuentra:
+        - Mostrar mensaje "Evento no encontrado" y sugerir regresar.
+   5. Mantener la lista `eventos` en memoria tal como estaba.
+   6. Todo el código debe estar dentro del mismo archivo `.razor` y usar `OnParametersSet`
+      para recalcular cuando cambie la ruta/ID.
+*@
+
+<PageTitle>SEM | Tickets</PageTitle>
+
+<div class="compra-evento">
+    @if (eventoSeleccionado is not null)
+    {
+        <div class="card mb-3 evento-card-ticket">
+            <div class="row g-0">
+                <div class="col-md-6">
+                    <img src="@eventoSeleccionado.ImagenUrl" class="img-fluid rounded-start" alt="@eventoSeleccionado.Titulo">
+                </div>
+                <div class="col-md-6">
+                    <div class="card-body">
+                        <h4 class="card-title">@eventoSeleccionado.Titulo</h4>
+                        <p class="card-text texto-rojo">@eventoSeleccionado.Ubicacion</p>
+                        <p class="card-text">@eventoSeleccionado.Descripcion</p>
+                        <div class="evento-detalles">
+                            <div>
+                                <i class="bi bi-geo-alt"></i>
+                                <p class="card-text"><small class="text-body-secondary">@eventoSeleccionado.Ubicacion</small></p>
+                            </div>
+                            <div>
+                                <i class="bi bi-calendar4-event"></i>
+                                <p class="card-text"><small class="text-body-secondary">@eventoSeleccionado.Fecha</small></p>
+                            </div>
+                            <div>
+                                <i class="bi bi-clock"></i>
+                                <p class="card-text"><small class="text-body-secondary">@eventoSeleccionado.Duracion</small></p>
+                            </div>
+                            <div>
+                                <i class="bi bi-compass"></i>
+                                <p class="card-text"><small class="text-body-secondary">@eventoSeleccionado.Distancia</small></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (IdEvento == 0 && string.IsNullOrWhiteSpace(id))
+    {
+        <p>Parámetro de ID no proporcionado.</p>
+    }
+    else if (IdEvento == 0)
+    {
+        <p>El ID proporcionado no es válido.</p>
+    }
+    else
+    {
+        <p>Evento con ID <b>@IdEvento</b> no encontrado.</p>
+    }
+</div>
+
+<div class="seccion-tickets-evento">
+    @if (eventoSeleccionado is not null)
+    {
+        <div class="row justify-content-center g-4">
+            <h3>Comprar Tickets para @eventoSeleccionado.Titulo</h3>
+            <div class="col-md-4">
+                <div class="card card-ticket anticipadas">
+                    <div class="card-body">
+                        <h5 class="card-title">Anticipadas</h5>
+                        <p class="card-precio">$2.500</p> <!-- Modificar el precio para que se asigne de forma variable -->
+                        <button class="btn btn-comprar" @onclick="ComprarAnticipada">Comprar</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-ticket">
+                    <div class="card-body">
+                        <h5 class="card-title">Generales</h5>
+                        <p class="card-precio">$3.200</p> <!-- Modificar el precio para que se asigne de forma variable -->
+                        <button class="btn btn-comprar" @onclick="ComprarGeneral">Comprar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string id { get; set; }  // Blazor siempre pasa string
+
+    private int IdEvento;
+    private Evento? eventoSeleccionado;
+
+    protected override void OnParametersSet()
+    {
+        // Intentar parsear el id
+        if (!int.TryParse(id, out IdEvento))
+        {
+            // Manejar error si no se puede parsear
+            IdEvento = 0;
+            eventoSeleccionado = null;
+            return;
+        }
+
+        // Buscar evento en la lista
+        eventoSeleccionado = eventos.FirstOrDefault(e => e.Id == IdEvento);
+    }
+
+    void ComprarAnticipada()
+    {
+        Console.WriteLine("Compra de entrada anticipada iniciada.");
+        // Lógica para compra anticipada
+    }
+
+    void ComprarGeneral()
+    {
+        Console.WriteLine("Compra de entrada general iniciada.");
+        // Lógica para compra general
+    }
+
+    record Evento(int Id, string Titulo, string Descripcion, string Fecha, string ImagenUrl, string Ubicacion, string Duracion, string Distancia);
+
+    List<Evento> eventos = new()
+    {
+        new(1, "Ironman Punta del Este", "Triatlón de larga distancia", "15/02/2026", "https://media.gq.com.mx/photos/60e5f796433a17b371256f2f/16:9/w_2560%2Cc_limit/ironman-1183785434.jpg", "Punta del Este, Uruguay", "10h 30m", "226 km"),
+        new(2, "Ironman Francia", "Competencia internacional", "01/04/2026", "https://www.triatlonweb.es/uploads/s1/11/88/95/22/por-que-deberi-as-hacer-en-francia-una-prueba-ironman.jpeg", "Niza, Francia", "9h 45m", "226 km"),
+        new(3, "Ironman Brasil", "Uno de los eventos más duros del circuito, con paisajes increíbles.", "20/06/2026", "https://blog.endurancegroup.org/wp-content/uploads/2019/01/1307283066-1600.jpg", "Florianópolis, Brasil", "11h 10m", "226 km"),
+        new(4, "Ironman Lanzarote", "Evento legendario en la isla, conocido por su dificultad y belleza.", "05/09/2026", "https://lanzarotesportsdestination.com/wp-content/uploads/2022/03/LanzaroteESD-Pedro-Perez-Ironman-70.3-Lanzarote-2022-84-78_LD.jpg", "Lanzarote, España", "12h 05m", "226 km")
+    };
+}
