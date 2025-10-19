@@ -1,6 +1,8 @@
-﻿@page "/GestorCarreara"
+﻿@page "/admin/GestorCarreara"
 @using System.Diagnostics
-<link href="./css/site.css" rel="stylesheet" />
+@inject NavigationManager Navigation
+
+<link href="/css/site.css" rel="stylesheet" />
 
 <PageTitle>Gestion de Carreras</PageTitle>
 
@@ -16,17 +18,17 @@
 
             <ul class="nav nav-pills flex-column mb-auto">
                 <li class="nav-item mb-2">
-                    <a href="#" class="nav-link active d-flex align-items-center">
+                    <a href="/admin/GestorCarreara" class="nav-link active d-flex align-items-center">
                         🏁 <span class="ms-2">Gestión de Carreras</span>
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a href="#" class="nav-link text-dark d-flex align-items-center">
+                    <a href="/admin/GestorCorredores" class="nav-link text-dark d-flex align-items-center">
                         👟 <span class="ms-2">Gestión de Corredores</span>
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a href="#" class="nav-link text-dark d-flex align-items-center">
+                    <a href="/admin/MiPerfil" class="nav-link text-dark  d-flex align-items-center">
                         👤 <span class="ms-2">Mi Perfil</span>
                     </a>
                 </li>
@@ -88,8 +90,16 @@
                                 </p>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-lg rounded-pill m-3 shadow" style="color: white; background:#007bff">Opciones</button>
+                                <button class="btn-lg rounded-pill m-3 shadow"
+                                        style="color: white; background:#007bff"
+                                        @onclick="() => IrAOpciones(carrera)">
+                                    Opciones
+                                </button>
                                 <button class="btn-lg rounded-pill btn-outline-danger shadow">Eliminar</button>
+                              
+                                <button class="btn btn-success" @onclick="ContarClicks">
+                                    Probar Click
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -98,7 +108,7 @@
 
             }
         </div>
-
+        
 
 
         <!--Paginacion-->
@@ -146,5 +156,20 @@
         public int Corredores { get; set; }
         public int Distancia { get; set; }
         public bool Abierta { get; set; }
+    }
+
+    private void IrAOpciones(Carrera carrera)
+    {
+        Debug.WriteLine($"Click en carrera: {carrera.Nombre}");
+        Navigation.NavigateTo($"/admin/OpcionesDeCarrera");
+    }
+
+
+    private int contador = 0;
+
+    private void ContarClicks()
+    {
+        contador++;
+        Console.WriteLine($"Clicks: {contador}");
     }
 }
