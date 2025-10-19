@@ -1,0 +1,107 @@
+﻿@page "/admin/OpcionesDeCarrera"
+@using System.Diagnostics
+<link href="/css/site.css" rel="stylesheet" />
+
+<PageTitle>Gestion de Carreras</PageTitle>
+
+
+<div class="page-container ml-4 d-flex">
+
+    <!--Contenido SideBar-->
+
+    <div class="d-flex flex-column align-items-start justify-content-center" style="height: 100vh;">
+        <div class=" m-4 bg-light p-4 rounded-3 w-100 shadow-lg p-3 mb-5 bg-body-tertiary rounded border" style="max-width: 300px; min-height: 400px;">
+
+            <h5 class="text-center fw-bold mb-4">Opciones</h5>
+
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item mb-2">
+                    <a href="/admin/GestorCarreara" class="nav-link activenav-link text-dark d-flex align-items-center">
+                        🏁 <span class="ms-2">Gestión de Carreras</span>
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="/admin/GestorCorredores" class="nav-link text-dark d-flex align-items-center">
+                        👟 <span class="ms-2">Gestión de Corredores</span>
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="/admin/MiPerfil" class=" nav-link text-dark d-flex align-items-center">
+                        👤 <span class="ms-2">Mi Perfil</span>
+                    </a>
+                </li>
+            </ul>
+
+            <hr>
+
+            <div class="mt-auto">
+                <button class="btn btn-outline-danger w-100 mb-2 d-flex align-items-center justify-content-center">
+                    🚪 <span class="ms-2">Salir</span>
+                </button>
+                <button class="btn btn-outline-success w-100 d-flex align-items-center justify-content-center">
+                    🏠 <span class="ms-2">Home</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!--Main Content-->
+    <div class="container my-5">
+        <h2 class="text-center fw-bold mb-4">Gestión de Carrera</h2>
+        <hr class="w-25 mx-auto mb-5">
+
+        <div class="card shadow-sm border rounded-3 p-3" style="background-color:#BDBABA; margin-top:150px;">
+            <div class="row g-3 align-items-center" style="background-color:#BDBABA;">
+                <!-- Imagen -->
+                <div class="col-md-3 d-flex flex-column align-items-center">
+                    <div class="border rounded-3 bg-light d-flex justify-content-center align-items-center" style="width: 100%; height: 180px;">
+                        <i class="bi bi-image fs-1 text-secondary"></i>
+                    </div>
+                    <button class="btn btn-outline-secondary btn-sm mt-2">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                </div>
+
+                <!-- Información -->
+                <div class="col-md-9">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0">Carrera 1</h5>
+                        <span class="text-muted small">Ganador</span>
+                    </div>
+
+                    <p class="text-secondary mb-1 mt-2">Organizador: Admin Name</p>
+                    <p class="text-secondary mb-1">Fecha: xx/xx/xxxx</p>
+                    <p class="text-secondary mb-3">Distancia: 00Km</p>
+
+                    <!-- Cantidad de corredores -->
+                    <div class="mb-3">
+                        <label for="corredores" class="form-label fw-semibold small">Cantidad de Corredores</label>
+                        <input type="text" class="form-control form-control-sm w-25" id="corredores" value="1.500">
+                    </div>
+
+                    <!-- Status -->
+                    <div class="mb-3 w-25">
+                        <label for="status" class="form-label fw-semibold small">Status</label>
+                        <select class="form-select form-select-sm" id="status">
+                            <option selected>Abierta</option>
+                            <option>Cerrada</option>
+                            <option>Finalizada</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-danger btn-sm">Eliminar</button>
+
+                    <div class="d-flex justify-content-end">
+                        <span class="badge bg-light text-dark border mt-3">No hay ganador por el momento</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        
+        
+
+
+            

@@ -1,0 +1,93 @@
+﻿@page "/admin/GestorCorredores"
+@using System.Diagnostics
+<link href="/css/site.css" rel="stylesheet" />
+
+<PageTitle>Gestion de Corredores</PageTitle>
+
+
+<div class="page-container ml-4 d-flex">
+
+    <!--Contenido SideBar-->
+
+    <div class="d-flex flex-column align-items-start justify-content-center" style="height: 100vh;">
+        <div class="sidebar m-4 bg-light p-4 rounded-3 w-100 shadow-lg p-3 mb-5 bg-body-tertiary rounded border" style="max-width: 300px; min-height: 400px;">
+
+            <h5 class="text-center fw-bold mb-4">Opciones</h5>
+
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item nav-link mb-2">
+                    <a href="/admin/GestorCarreara" class="nav-link text-dark d-flex align-items-center ">
+                        🏁 <span class="ms-2">Gestión de Carreras</span>
+                    </a>
+                </li>
+                <li class="nav-item nav-link mb-2">
+                    <a href="/admin/GestorCorredores" class="nav-link active d-flex align-items-center">
+                        👟 <span class="ms-2">Gestión de Corredores</span>
+                    </a>
+                </li>
+                <li class="nav-item nav-link mb-2">
+                    <a href="/admin/MiPerfil" class="nav-link text-dark d-flex align-items-center">
+                        👤 <span class="ms-2">Mi Perfil</span>
+                    </a>
+                </li>
+            </ul>
+
+            <hr>
+
+            <div class="mt-auto">
+                <button class="btn btn-outline-danger w-100 mb-2 d-flex align-items-center justify-content-center">
+                    🚪 <span class="ms-2">Salir</span>
+                </button>
+                <button class="btn btn-outline-success w-100 d-flex align-items-center justify-content-center">
+                    🏠 <span class="ms-2">Home</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <!--Contenido Main-->
+    <div class="Form-Container d-flex justify-content-center align-items-center mt-5 flex-grow-1 p-4" style="height: 100vh;">
+        <div class="card p-5 shadow w-100"
+             style="background-color: #d9d9d9; border-radius: 15px; max-width: 650px; min-width: 500px; min-height: 700px;">
+
+            <h4 class="mb-4 text-start fw-bold">Gestor Corredor</h4>
+
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Cédula</label>
+                <input type="text" id="cedula" class="form-control form-control-lg" placeholder="5.4215.568-2">
+            </div>
+
+            <div class="mb-4">
+                <label for="dorsal" class="form-label fw-semibold">Dorsal</label>
+                <select id="dorsal" class="form-select form-select-lg">
+                    <option>25</option>
+                    <option>35</option>
+                    <option>36</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="chip" class="form-label fw-semibold">Chip</label>
+                <select id="chip" class="form-select form-select-lg">
+                    <option>100</option>
+                    <option>101</option>
+                    <option>105</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Carrera</label>
+                <input type="text" id="Carrera" class="form-control form-control-lg" placeholder="Ingrese el nombre de la Carrera...">
+            </div>
+
+
+            <hr style="border: 1px solid #333; margin-bottom: 35px;">
+
+            <button class="btn btn-dark btn-lg w-100 mt-5">Guardar Datos</button>
+        </div>
+    </div>
+
+    </div>
+    

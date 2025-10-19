@@ -75,3 +75,35 @@
     flex-wrap: wrap;
     font-size: 0.9rem;
 }
+
+.sidebar {
+    transform: scale(1.02);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+
+
+/*Gestion_De_Corredores*/
+
+.Form-Container {
+    
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 50px;
+}
+
+.card {
+    border: 1px solid #888;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+.btn-dark:hover {
+    background-color: #333;
+}
