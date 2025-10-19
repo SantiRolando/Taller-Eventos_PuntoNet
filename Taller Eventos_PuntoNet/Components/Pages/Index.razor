@@ -2,33 +2,90 @@
 
 <link href="css/site.css" rel="stylesheet" />
 
-<div class="hero-section">
-    <img src="img/ciclistas.png" alt="Ciclistas" />
-    <div class="hero-text">
-        <h1>Clásica Carrera 10K de San Fernando</h1>
-        <button class="btn-register">Registrarse</button>
+
+<!-- CARRUSEL PRINCIPAL -->
+
+<div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+
+        <div class="carousel-item active">
+            <img src="img/ciclistas.png" class="d-block w-100" alt="Ciclistas" />
+            <div class="carousel-caption d-none d-md-block">
+                <h1 class="titulo-hero">Clásica Carrera 10K de San Fernando</h1>
+                <button class="btn btn-dark btn-lg">Registrarse</button>
+            </div>
+        </div>
+
+        <div class="carousel-item">
+            <img src="img/corredores1.png" class="d-block w-100" alt="Corredores1" />
+            <div class="carousel-caption d-none d-md-block">
+                <h1 class="titulo-hero">Entrená con los mejores</h1>
+                <button class="btn btn-dark btn-lg">Ver Más</button>
+            </div>
+        </div>
+
+        <div class="carousel-item">
+            <img src="img/corredores3.png" class="d-block w-100" alt="Corredores3" />
+            <div class="carousel-caption d-none d-md-block">
+                <h1 class="titulo-hero">Viví la experiencia Sport Event</h1>
+                <button class="btn btn-dark btn-lg">Inscribirme</button>
+            </div>
+        </div>
     </div>
+
+    <!-- Controles -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Siguiente</span>
+    </button>
 </div>
 
-<section class="productos">
+
+<!-- PRODUCTOS -->
+
+<section class="productos text-center py-5">
     <h2>Ármate con equipo de alta calidad</h2>
-    <div class="productos-grid">
 
-        <div class="producto">
+    <div class="container mt-4">
+        <div class="row justify-content-center g-4">
+            <div class="col-md-3 col-10">
+                <div class="card producto-card">
+                    <img src="img/producto1.jpg" class="card-img-top" alt="p1" />
+                    <div class="card-body">
+                        <a href="#" class="btn btn-dark">Ordenar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-10">
+                <div class="card producto-card">
+                    <img src="img/producto2.jpg" class="card-img-top" alt="p2" />
+                    <div class="card-body">
+                        <a href="#" class="btn btn-dark">Ordenar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-10">
+                <div class="card producto-card">
+                    <img src="img/producto3.jpg" class="card-img-top" alt="p3" />
+                    <div class="card-body">
+                        <a href="#" class="btn btn-dark">Ordenar</a>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="producto">
-        </div>
-
-        <div class="producto">
-        </div>
-
     </div>
 </section>
 
-<section class="patrocinadores">
-
+<!-- PATROCINADORES -->
+<section class="patrocinadores text-center py-5">
     <h2>Patrocinadores</h2>
-    <img src="img/nadadores.png" alt="Nadadores" />
 
+    <div class="patrocinadores-img-container mt-3">
+        <img src="img/nadadores.png" class="fondo-patrocinadores" alt="Fondo_Patrocinadores" />
+        <img src="img/patrons.png" class="logos-patrocinadores" alt="Patrocinadores" />
+    </div>
 </section>
