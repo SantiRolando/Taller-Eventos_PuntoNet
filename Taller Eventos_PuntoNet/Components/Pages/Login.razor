@@ -1,0 +1,34 @@
+﻿@page "/login"
+
+<link href="css/site.css" rel="stylesheet" />
+
+<section class="login-section">
+
+    <div class="login-card">
+
+        <h2>Iniciar Sesión</h2>
+
+        <form class="login-form">
+
+            <div class="form-group">
+                <label for="email">Correo electrónico</label>
+                <input type="email" id="email" placeholder="ejemplo@correo.com" />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" placeholder="********" />
+            </div>
+
+            <button type="submit" class="btn-login-page">Ingresar</button>
+
+            <p class="register-link">
+                ¿No tienes una cuenta?
+                <NavLink href="/register">Regístrate aquí</NavLink>
+            </p>
+
+        </form>
+
+    </div>
+
+</section>
