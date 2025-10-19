@@ -1,0 +1,61 @@
+﻿@page "/eventos"
+@inject NavigationManager NavManager
+
+<PageTitle>SEM | Eventos</PageTitle>
+
+<div class="main-eventos">
+    <div class="tabs">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="proximos-eventos-tab" data-bs-toggle="tab" data-bs-target="#proximos-eventos-tab-pane" type="button" role="tab" aria-controls="proximos-eventos-tab-pane" aria-selected="true">Próximos Eventos</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="eventos-terminados-tab" data-bs-toggle="tab" data-bs-target="#eventos-terminados-tab-pane" type="button" role="tab" aria-controls="eventos-terminados-tab-pane" aria-selected="false">Eventos Terminados</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="proximos-eventos-tab-pane" role="tabpanel" aria-labelledby="proximos-eventos-tab" tabindex="0">
+                <!-- proximos eventos -->
+                <div class="imagenes-eventos">
+                    <div class="row row-cols-1 row-cols-md-2 g-4">
+                        @foreach (var evento in eventos)
+                        {
+                            var eventoId = evento.Id;
+                            <div class="col">
+                                <a class="card evento-card" href="@($"/eventos/{eventoId}/comprar")" role="button">
+                                    <img src="@evento.ImagenUrl" class="card-img" alt="@evento.Titulo">
+                                    <div class="card-img-overlay">
+                                        <h5 class="card-title">@evento.Titulo</h5>
+                                        <p class="card-text">@evento.Descripcion</p>
+                                        <p class="card-text"><small>@evento.Fecha</small></p>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="eventos-terminados-tab-pane" role="tabpanel" aria-labelledby="eventos-terminados-tab" tabindex="0">
+                <!-- eventos terminados -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    record Evento(int Id, string Titulo, string Descripcion, string Fecha, string ImagenUrl);
+
+    List<Evento> eventos = new()
+    {
+        new(1, "Ironman Punta del Este", "Triatlón de larga distancia", "15/02/2026", "https://media.gq.com.mx/photos/60e5f796433a17b371256f2f/16:9/w_2560%2Cc_limit/ironman-1183785434.jpg"),
+        new(2, "Ironman Francia", "Competencia internacional", "01/04/2026", "https://www.triatlonweb.es/uploads/s1/11/88/95/22/por-que-deberi-as-hacer-en-francia-una-prueba-ironman.jpeg"),
+        new(3, "Ironman Brasil", "Uno de los eventos más duros del circuito, con paisajes increíbles.", "20/06/2026", "https://blog.endurancegroup.org/wp-content/uploads/2019/01/1307283066-1600.jpg"),
+        new(4, "Ironman Lanzarote", "Evento legendario en la isla, conocido por su dificultad y belleza.", "05/09/2026", "https://lanzarotesportsdestination.com/wp-content/uploads/2022/03/LanzaroteESD-Pedro-Perez-Ironman-70.3-Lanzarote-2022-84-78_LD.jpg")
+    };
+
+    void IrACompra(int idEvento)
+    {
+        Console.WriteLine($"Navegando a /eventos/{idEvento}/comprar");
+        NavManager.NavigateTo($"/eventos/{idEvento}/comprar");
+    }
+}
