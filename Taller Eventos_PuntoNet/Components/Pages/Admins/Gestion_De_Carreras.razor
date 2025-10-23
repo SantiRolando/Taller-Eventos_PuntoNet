@@ -90,16 +90,12 @@
                                 </p>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-lg rounded-pill m-3 shadow"
-                                        style="color: white; background:#007bff"
-                                        @onclick="() => IrAOpciones(carrera)">
-                                    Opciones
-                                </button>
+                                <a href="/admin/OpcionesDeCarrera">
+                              <button class="btn-lg rounded-pill m-3 shadow" style="color: white; background:#007bff"> Opciones </button>
+                              </a>  
                                 <button class="btn-lg rounded-pill btn-outline-danger shadow">Eliminar</button>
                               
-                                <button class="btn btn-success" @onclick="ContarClicks">
-                                    Probar Click
-                                </button>
+                   
                             </div>
                         </div>
                     </div>
@@ -157,13 +153,13 @@
         public int Distancia { get; set; }
         public bool Abierta { get; set; }
     }
-
+    /*
     private void IrAOpciones(Carrera carrera)
     {
         Debug.WriteLine($"Click en carrera: {carrera.Nombre}");
         Navigation.NavigateTo($"/admin/OpcionesDeCarrera");
     }
-
+    */
 
     private int contador = 0;
 
