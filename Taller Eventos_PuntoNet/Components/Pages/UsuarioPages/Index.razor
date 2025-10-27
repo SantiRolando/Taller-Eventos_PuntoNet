@@ -1,0 +1,38 @@
+﻿@page "/usuarios"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Eventos_PuntoNet.Components.Models
+@using Eventos_PuntoNet.Components.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<Eventos_PuntoNet.Components.Data.AppDbContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="usuarios/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Usuarios">
+    <PropertyColumn Property="usuario => usuario.Nombre" />
+    <PropertyColumn Property="usuario => usuario.Email" />
+    <PropertyColumn Property="usuario => usuario.Password" />
+
+    <TemplateColumn Context="usuario">
+        <a href="@($"usuarios/edit?ci={usuario.Ci}")">Edit</a> |
+        <a href="@($"usuarios/details?ci={usuario.Ci}")">Details</a> |
+        <a href="@($"usuarios/delete?ci={usuario.Ci}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private AppDbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

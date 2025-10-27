@@ -1,0 +1,99 @@
+﻿@page "/usuarios/edit"
+@using Microsoft.EntityFrameworkCore
+@using Eventos_PuntoNet.Components.Models
+@inject IDbContextFactory<Eventos_PuntoNet.Components.Data.AppDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Usuario</h2>
+<hr />
+@if (Usuario is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Usuario" OnValidSubmit="UpdateUsuario" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Usuario.Ci" value="@Usuario.Ci" />
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">Nombre:</label>
+                    <InputText id="nombre" @bind-Value="Usuario.Nombre" class="form-control" aria-required="true"/>
+                    <ValidationMessage For="() => Usuario.Nombre" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <InputText id="email" @bind-Value="Usuario.Email" class="form-control" aria-required="true"/>
+                    <ValidationMessage For="() => Usuario.Email" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password:</label>
+                    <InputText id="password" @bind-Value="Usuario.Password" class="form-control" aria-required="true"/>
+                    <ValidationMessage For="() => Usuario.Password" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/usuarios">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Ci { get; set; }
+
+    [SupplyParameterFromForm]
+    private Usuario? Usuario { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Usuario ??= await context.Usuarios.FirstOrDefaultAsync(m => m.Ci == Ci);
+
+        if (Usuario is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateUsuario()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Usuario!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!UsuarioExists(Usuario!.Ci))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/usuarios");
+    }
+
+    private bool UsuarioExists(int ci)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Usuarios.Any(e => e.Ci == ci);
+    }
+}
