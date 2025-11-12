@@ -1,4 +1,11 @@
-﻿<nav class="navbar">
+﻿@using Eventos_PuntoNet.Components.Services
+@using Eventos_PuntoNet.Components.Models
+@inject SessionService Session
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<nav class="navbar">
     <div class="navbar-left">
         <div class="logo">
             <i class="bi bi-bicycle"></i>
@@ -10,15 +17,67 @@
             <li><NavLink href="/eventos">Eventos</NavLink></li>
             <li><NavLink href="/servicios">Servicios</NavLink></li>
             <li><NavLink href="/contacto">Contacto</NavLink></li>
+            @if (usuario != null && usuario.TipoUsuario == "Administrador")
+            {
+                <li><NavLink href="/admin/MiPerfil">Administración</NavLink></li>
+            }
         </ul>
     </div>
 
     <div class="navbar-buttons">
-
-        <a href="/login">
-            <button class="btn-login">Iniciar Sesión</button>
-        </a>
-
+        @if (!logueado)
+        {
+            <a href="/login"><button class="btn-login">Iniciar Sesión</button></a>
+        }
+        else if (usuario is not null)
+        {
+            <button class="btn-logout" @onclick="MostrarConfirmacion">@usuario.Nombre | Cerrar sesión</button>
+        }
     </div>
-
 </nav>
+
+<!-- Modal de confirmación -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="logoutModalLabel">Confirmar cierre de sesión</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Seguro que querés cerrar sesión?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" @onclick="CerrarSesionConfirmado">Cerrar sesión</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool logueado = false;
+    private Usuario? usuario;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            usuario = await Session.GetUsuario();
+            logueado = usuario is not null;
+            StateHasChanged();
+        }
+    }
+
+    private async Task MostrarConfirmacion()
+    {
+        await JS.InvokeVoidAsync("bootstrapInterop.showModal", "#logoutModal");
+    }
+
+    private async Task CerrarSesionConfirmado()
+    {
+        await JS.InvokeVoidAsync("bootstrapInterop.hideModal", "#logoutModal");
+        await Session.CerrarSesion();
+        NavigationManager.NavigateTo("/", true);
+    }
+}
