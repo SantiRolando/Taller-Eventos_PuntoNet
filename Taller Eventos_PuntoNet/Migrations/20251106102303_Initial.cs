@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TallerEventos_PuntoNet.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,12 +31,11 @@ namespace TallerEventos_PuntoNet.Migrations
                 name: "Usuarios",
                 columns: table => new
                 {
-                    Ci = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Ci = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Discriminator = table.Column<string>(type: "nvarchar(13)", maxLength: 13, nullable: false)
+                    TipoUsuario = table.Column<string>(type: "nvarchar(13)", maxLength: 13, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -68,11 +67,11 @@ namespace TallerEventos_PuntoNet.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Ci_Usuario = table.Column<int>(type: "int", nullable: false),
+                    Ci_Usuario = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Id_Evento = table.Column<int>(type: "int", nullable: false),
                     Id_Chip = table.Column<int>(type: "int", nullable: false),
                     Dorsal_Atleta = table.Column<int>(type: "int", nullable: false),
-                    ParticipanteCi = table.Column<int>(type: "int", nullable: true)
+                    ParticipanteCi = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
