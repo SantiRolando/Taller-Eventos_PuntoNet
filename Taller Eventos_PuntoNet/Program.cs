@@ -8,6 +8,10 @@ using Taller_Eventos_PuntoNet.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
+builder.Services.AddQuickGridEntityFrameworkAdapter();
+
 // 🔹 Servicios de Razor y Blazor
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -24,6 +28,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
 
 // 🔹 Servicio de sesión
 builder.Services.AddScoped<SessionService>();
@@ -49,5 +54,6 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
 
 app.Run();

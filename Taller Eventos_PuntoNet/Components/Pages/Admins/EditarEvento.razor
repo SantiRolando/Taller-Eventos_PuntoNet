@@ -1,0 +1,212 @@
+﻿@page "/admin/editar-evento/{Id:int}"
+@using Eventos_PuntoNet.Components.Models
+@using Eventos_PuntoNet.Components.Data
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<link href="/css/site.css" rel="stylesheet" />
+@rendermode InteractiveServer
+
+<div class="crear-evento">
+
+    <div class="card">
+        <h3 class="titulo">✏️ Editar Evento</h3>
+
+        @if (evento == null)
+        {
+            <p>Cargando...</p>
+        }
+        else
+        {
+            <EditForm Model="evento" OnValidSubmit="GuardarCambios">
+                <DataAnnotationsValidator />
+
+                <div class="formulario">
+
+                    <div class="campo">
+                        <label>Nombre del Evento</label>
+                        <InputText class="input" @bind-Value="evento.Nombre" />
+                    </div>
+
+                    <div class="campo">
+                        <label>Imagen del Evento</label>
+                        <input type="file" @onchange="OnImagenSeleccionada" />
+
+                        @if (evento.Imagen != null)
+                        {
+                            <img class="preview-imagen" src="data:image/png;base64,@Convert.ToBase64String(evento.Imagen)" />
+                        }
+                    </div>
+
+                    <div class="campo">
+                        <label>Distancia (km)</label>
+                        <InputNumber class="input" TValue="int"
+                                     @bind-Value="evento.Km"
+                                     @oninput="OnKmChanged" />
+
+                    </div>
+
+                    <div class="campo">
+                        <label>Cantidad de Kits</label>
+                        <InputNumber class="input" TValue="int" @bind-Value="evento.Cantidad_Kits" />
+                    </div>
+
+                    <div class="campo">
+                        <label>Cantidad de Sensores</label>
+                        <InputNumber class="input" TValue="int" @bind-Value="cantidadSensores"
+                                     @oninput="OnCantidadSensoresChanged" />
+                    </div>
+
+                    @if (evento.Km > 0 && sensores.Any())
+                    {
+                        <div class="sensores">
+                            <h4>Ubicación de Sensores</h4>
+
+                            <div class="barra-sensores">
+                                @{
+                                    int index = 1;
+                                }
+                                @foreach (var s in sensores)
+                                {
+                                    var leftPercent = (evento.Km > 0) ? (s.Distancia / evento.Km) * 100 : 0;
+                                    <div class="sensor-dot" style=@($"left:{leftPercent}%;")
+                                         title="Sensor @index (@s.Distancia km)">
+                                    </div>
+                                    index++;
+                                }
+                            </div>
+
+                            <div class="lista-sensores">
+                                @{
+                                    int index2 = 1;
+                                }
+                                @foreach (var s in sensores)
+                                {
+                                    <div class="sensor-item">
+                                        <label>Sensor @index2:</label>
+                                        <input type="range"
+                                               min="0"
+                                               max="@evento.Km"
+                                               step="0.5"
+                                               @bind="s.Distancia"
+                                               @bind:event="oninput"
+                                               @onchange="() => ValidarSensoresContraUltimo()" />
+                                        <span>@s.Distancia km</span>
+                                    </div>
+                                    index2++;
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    
+
+                    <div class="boton-container">
+                        <button type="submit" class="boton-guardar">💾 Guardar Cambios</button>
+                    </div>
+
+                </div>
+            </EditForm>
+        }
+    </div>
+</div>
+
+@code {
+
+    [Parameter] public int Id { get; set; }
+
+    Evento? evento;
+    List<Sensor> sensores = new();
+    int cantidadSensores = 0;
+
+
+
+    protected override async Task OnInitializedAsync() {
+
+        using var ctx = DbFactory.CreateDbContext();
+
+        evento = await ctx.Eventos
+            .Include(e => e.Sensores)
+            .FirstOrDefaultAsync(e => e.Id == Id);
+
+        if (evento != null){
+
+            sensores = evento.Sensores?.ToList() ?? new();
+            cantidadSensores = sensores.Count;
+        }
+    }
+
+    private void OnCantidadSensoresChanged(ChangeEventArgs e){
+
+        int nuevaCant = int.Parse(e.Value!.ToString()!);
+
+        while (sensores.Count < nuevaCant){
+
+            if (sensores.Count == nuevaCant - 1 && evento!.Km > 0)
+                sensores.Add(new Sensor { Distancia = evento.Km });
+            else
+                sensores.Add(new Sensor { Distancia = 0 });
+        }
+
+       
+        while (sensores.Count > nuevaCant)
+            sensores.RemoveAt(sensores.Count - 1);
+
+        cantidadSensores = nuevaCant;
+        ValidarSensoresContraUltimo();
+    }
+
+    private async Task GuardarCambios() {
+
+        using var ctx = DbFactory.CreateDbContext();
+
+        evento!.Sensores = sensores;
+        ctx.Eventos.Update(evento);
+        await ctx.SaveChangesAsync();
+
+        Navigation.NavigateTo("/admin/GestorCarrera");
+    }
+
+    private async Task OnImagenSeleccionada(ChangeEventArgs e)
+    {
+        var file = (IBrowserFile)e.Value!;
+        using var stream = file.OpenReadStream(5_000_000);
+        using var ms = new MemoryStream();
+        await stream.CopyToAsync(ms);
+
+        evento!.Imagen = ms.ToArray();
+    }
+
+    private void OnKmChanged(ChangeEventArgs e){
+
+        if (int.TryParse(e.Value?.ToString(), out int nuevoKm))
+        {
+            evento!.Km = nuevoKm;
+
+            // ultimo sensor al final
+            if (sensores.Count > 0)
+                sensores[^1].Distancia = nuevoKm;
+
+           
+            ValidarSensoresContraUltimo();
+        }
+    }
+
+    private void ValidarSensoresContraUltimo() {
+
+        if (sensores.Count == 0)
+            return;
+
+        var ultimo = sensores[^1].Distancia;
+
+        for (int i = 0; i < sensores.Count - 1; i++) {
+
+            if (sensores[i].Distancia > ultimo) {
+
+                sensores[i].Distancia = ultimo;
+
+            }
+        }
+    }
+}

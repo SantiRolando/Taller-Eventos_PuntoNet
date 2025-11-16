@@ -4,6 +4,7 @@ using Eventos_PuntoNet.Components.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace TallerEventos_PuntoNet.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251105003929_ActualizarSensores")]
+    partial class ActualizarSensores
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,9 +39,6 @@ namespace TallerEventos_PuntoNet.Migrations
                     b.Property<int>("Cantidad_Kits")
                         .HasColumnType("int");
 
-                    b.Property<byte[]>("Imagen")
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<int>("Km")
                         .HasColumnType("int");
 
@@ -59,9 +59,8 @@ namespace TallerEventos_PuntoNet.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Ci_Usuario")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Ci_Usuario")
+                        .HasColumnType("int");
 
                     b.Property<int>("Dorsal_Atleta")
                         .HasColumnType("int");
@@ -72,8 +71,8 @@ namespace TallerEventos_PuntoNet.Migrations
                     b.Property<int>("Id_Evento")
                         .HasColumnType("int");
 
-                    b.Property<string>("ParticipanteCi")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("ParticipanteCi")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -162,8 +161,16 @@ namespace TallerEventos_PuntoNet.Migrations
 
             modelBuilder.Entity("Eventos_PuntoNet.Components.Models.Usuario", b =>
                 {
-                    b.Property<string>("Ci")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Ci")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Ci"));
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -177,16 +184,11 @@ namespace TallerEventos_PuntoNet.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TipoUsuario")
-                        .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
-
                     b.HasKey("Ci");
 
                     b.ToTable("Usuarios");
 
-                    b.HasDiscriminator<string>("TipoUsuario").HasValue("Usuario");
+                    b.HasDiscriminator().HasValue("Usuario");
 
                     b.UseTphMappingStrategy();
                 });
@@ -195,7 +197,7 @@ namespace TallerEventos_PuntoNet.Migrations
                 {
                     b.HasBaseType("Eventos_PuntoNet.Components.Models.Usuario");
 
-                    b.HasDiscriminator().HasValue("Administrador");
+                    b.HasDiscriminator().HasValue("Admin");
                 });
 
             modelBuilder.Entity("Eventos_PuntoNet.Components.Models.Participante", b =>
