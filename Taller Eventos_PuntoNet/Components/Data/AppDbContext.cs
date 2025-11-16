@@ -17,6 +17,15 @@ namespace Eventos_PuntoNet.Components.Data
         public DbSet<Marca> Marcas { get; set; }
         public DbSet<Leaderboard> Leaderboards { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Mapear el discriminador a la propiedad TipoUsuario en la entidad Usuario
+            modelBuilder.Entity<Usuario>()
+                .HasDiscriminator<string>(u => u.TipoUsuario)
+                .HasValue<Admin>("Administrador")
+                .HasValue<Participante>("Participante");
 
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

@@ -4,6 +4,7 @@ using Eventos_PuntoNet.Components.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace TallerEventos_PuntoNet.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251106102303_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,9 +38,6 @@ namespace TallerEventos_PuntoNet.Migrations
 
                     b.Property<int>("Cantidad_Kits")
                         .HasColumnType("int");
-
-                    b.Property<byte[]>("Imagen")
-                        .HasColumnType("varbinary(max)");
 
                     b.Property<int>("Km")
                         .HasColumnType("int");
@@ -150,7 +150,7 @@ namespace TallerEventos_PuntoNet.Migrations
                     b.Property<int>("Distancia")
                         .HasColumnType("int");
 
-                    b.Property<int>("EventoId")
+                    b.Property<int?>("EventoId")
                         .HasColumnType("int");
 
                     b.HasKey("Id_Sensor");
@@ -256,13 +256,9 @@ namespace TallerEventos_PuntoNet.Migrations
 
             modelBuilder.Entity("Eventos_PuntoNet.Components.Models.Sensor", b =>
                 {
-                    b.HasOne("Eventos_PuntoNet.Components.Models.Evento", "Evento")
+                    b.HasOne("Eventos_PuntoNet.Components.Models.Evento", null)
                         .WithMany("Sensores")
-                        .HasForeignKey("EventoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Evento");
+                        .HasForeignKey("EventoId");
                 });
 
             modelBuilder.Entity("Eventos_PuntoNet.Components.Models.Evento", b =>
