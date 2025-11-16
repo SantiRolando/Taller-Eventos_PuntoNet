@@ -5,8 +5,9 @@ using Taller_Eventos_PuntoNet.Components;
 var builder = WebApplication.CreateBuilder(args);
 
 //Agregar conexi�n a la base de datos
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddDbContextFactory<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 
@@ -32,5 +33,6 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
 
 app.Run();

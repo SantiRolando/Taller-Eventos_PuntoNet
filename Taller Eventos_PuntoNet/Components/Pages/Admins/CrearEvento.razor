@@ -1,0 +1,178 @@
+﻿@page "/admin/crear-evento"
+
+@using Eventos_PuntoNet.Components.Models
+@using Eventos_PuntoNet.Components.Data
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject NavigationManager Nav
+
+
+@rendermode InteractiveServer
+
+<link href="css/site.css" rel="stylesheet" />
+
+<div class="crear-evento">
+
+    <div class="card">
+        <h3 class="titulo">Crear Nuevo Evento</h3>
+
+        <EditForm Model="@evento" OnValidSubmit="@GuardarEvento">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="formulario">
+
+
+
+                <div class="campo">
+                    <label for="nombre">Nombre del Evento</label>
+                    <InputText id="nombre" class="input" @bind-Value="evento.Nombre" />
+                </div>
+
+                <div class="campo">
+                    <label for="imagen">Imagen del Evento</label>
+                    <InputFile OnChange="OnImageSelected" />
+                    @if (imagenPreview != null)
+                    {
+                        <img src="@imagenPreview" alt="Vista previa" class="preview-imagen" />
+                    }
+                </div>
+
+                <div class="campo">
+                    <label for="km">Distancia Total (Km)</label>
+                    <InputNumber TValue="int" id="km" class="input" @bind-Value="evento.Km" />
+                </div>
+
+                <div class="campo">
+                    <label for="kits">Cantidad de Kits</label>
+                    <InputNumber TValue="int" id="kits" class="input" @bind-Value="evento.Cantidad_Kits" />
+                </div>
+
+                <div class="campo">
+                    <label for="cantidadSensores">Cantidad de Sensores</label>
+                    <InputNumber TValue="int" id="cantidadSensores" class="input" @bind-Value="CantidadSensores" />
+                </div>
+
+                @if (evento.Km > 0 && sensores.Any())
+                {
+                    <div class="sensores">
+                        <h4>Ubicación de Sensores</h4>
+
+                        <div class="barra-sensores">
+                            @{
+                                int index = 1;
+                            }
+                            @foreach (var sensor in sensores)
+                            {
+                                var leftPercent = (evento.Km > 0) ? (sensor.Distancia / evento.Km) * 100 : 0;
+                                <div class="sensor-dot"
+                                     style=@($"left:{leftPercent}%;")
+                                     title="Sensor @index (@sensor.Distancia km)">
+                                </div>
+                                index++;
+                            }
+                        </div>
+
+                        <div class="lista-sensores">
+                            @{
+                                int index1 = 1;
+                            }
+                            @foreach (var sensor in sensores)
+                            {
+                                <div class="sensor-item">
+                                    <label>Sensor @index1:</label>
+                                    <input type="range" min="0" max="@evento.Km" step="0.5"
+                                           @bind="sensor.Distancia" @bind:event="oninput" />
+                                    <span>@sensor.Distancia km</span>
+                                </div>
+                                index1++;
+                            }
+                        </div>
+                    </div>
+                }
+
+
+                <div class="boton-container">
+                    <button type="submit" class="boton-guardar">Guardar Evento</button>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private Evento evento { get; set; } = new();
+    private List<Sensor> sensores = new();
+    private int _cantidadSensores;
+
+    //imagenes
+    private IBrowserFile? imagenArchivo;
+    private string? imagenPreview;
+
+    private int CantidadSensores
+
+
+    {
+        get => _cantidadSensores;
+        set
+        {
+            if (_cantidadSensores != value)
+            {
+                _cantidadSensores = value;
+                OnCantidadSensoresChanged(value);
+            }
+        }
+    }
+
+    private void OnCantidadSensoresChanged(int value)
+    {
+        sensores.Clear();
+        for (int i = 1; i <= value; i++)
+        {
+
+            // Si es el último sensor o si hay solo uno
+            if (i == value && evento.Km > 0)
+            {
+                if (i == value && evento.Km > 0)
+                    sensores.Add(new Sensor { Distancia = evento.Km });
+            }
+            else
+            {
+                sensores.Add(new Sensor { Distancia = 0 });
+            }
+
+
+
+        }
+        
+    }
+
+    private async Task GuardarEvento()
+    {
+        using var ctx = DbFactory.CreateDbContext();
+        evento.Sensores = sensores;
+        ctx.Eventos.Add(evento);
+        await ctx.SaveChangesAsync();
+
+        Console.WriteLine($"Evento '{evento.Nombre}' guardado con {sensores.Count} sensores y '{evento.Cantidad_Kits}' Kits");
+
+        Nav.NavigateTo("/admin/GestorCarrera");
+    }
+
+    
+
+    private async Task OnImageSelected(InputFileChangeEventArgs e)
+    {
+        imagenArchivo = e.File;
+
+        // Convertimos la imagen a bytes
+        using var stream = imagenArchivo.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024); // máx 5MB
+        using var ms = new MemoryStream();
+        await stream.CopyToAsync(ms);
+        evento.Imagen = ms.ToArray();
+
+        // Generamos preview en base64
+        var base64 = Convert.ToBase64String(evento.Imagen);
+        imagenPreview = $"data:{imagenArchivo.ContentType};base64,{base64}";
+    }
+}
