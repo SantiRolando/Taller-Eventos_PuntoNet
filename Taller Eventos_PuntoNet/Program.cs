@@ -8,8 +8,6 @@ using Taller_Eventos_PuntoNet.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 
 // 🔹 Servicios de Razor y Blazor

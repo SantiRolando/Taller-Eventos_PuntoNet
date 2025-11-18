@@ -16,6 +16,11 @@ namespace Eventos_PuntoNet.Components.Models
         public int Cantidad_Inscritos { get; set; }
         public int Cantidad_Kits { get; set; }
 
+        public bool EnVivo { get; set; }
+        public string? Descripcion { get; set; }
+        public string? Ubicacion { get; set; }
+        public DateTime Fecha { get; set; }
+
         public byte[]? Imagen { get; set; }
 
         public ICollection<Inscripcion>? Inscripciones { get; set; }

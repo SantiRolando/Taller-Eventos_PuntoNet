@@ -5,9 +5,9 @@
 @inject IDbContextFactory<AppDbContext> DbFactory
 @inject NavigationManager Navigation
 
-<link href="/css/site.css" rel="stylesheet" />
-
 @rendermode InteractiveServer
+
+<link href="css/site.css" rel="stylesheet" />
 
 <PageTitle>Gestión de Carreras</PageTitle>
 
@@ -50,6 +50,20 @@
                         <p><b>📏 Distancia:</b> @evento.Km km</p>
                         <p><b>📦 Kits:</b> @evento.Cantidad_Kits</p>
                         <p><b>📡 Sensores:</b> @evento.Sensores?.Count</p>
+
+                        @if (evento.EnVivo)
+                        {
+                            <p><b>🏁 Estado:</b> <span style="color: #28a745; font-weight: bold;">En vivo</span></p>
+                        }
+                        else if (evento.Leaderboard != null && evento.Leaderboard.Any())
+                        {
+                            <p><b>🏁 Estado:</b> <span style="color: #dc3545; font-weight: bold;">Terminado</span></p>
+                        }
+                        else
+                        {
+                            <p><b>🏁 Estado:</b> <span style="color: #f0ad4e; font-weight: bold;">No empezó</span></p>
+                        }
+
 
                         <div class="acciones">
                             <button class="btn-opciones" @onclick="() => EditarEvento(evento.Id)">✏️ Editar</button>

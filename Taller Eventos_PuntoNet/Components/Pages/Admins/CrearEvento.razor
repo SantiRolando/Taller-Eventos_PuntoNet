@@ -1,17 +1,16 @@
 ﻿@page "/admin/crear-evento"
-
 @using Eventos_PuntoNet.Components.Models
 @using Eventos_PuntoNet.Components.Data
 @using Microsoft.EntityFrameworkCore
 @inject IDbContextFactory<AppDbContext> DbFactory
 @inject NavigationManager Nav
 
-
 @rendermode InteractiveServer
 
 <link href="css/site.css" rel="stylesheet" />
 
 <div class="crear-evento">
+
 
     <div class="card">
         <h3 class="titulo">Crear Nuevo Evento</h3>
@@ -47,6 +46,23 @@
                     <label for="kits">Cantidad de Kits</label>
                     <InputNumber TValue="int" id="kits" class="input" @bind-Value="evento.Cantidad_Kits" />
                 </div>
+
+                <div class="campo">
+                    <label for="descripcion">Descripción</label>
+                    <InputTextArea id="descripcion" class="input" @bind-Value="evento.Descripcion" />
+                </div>
+
+                <div class="campo">
+                    <label for="ubicacion">Ubicación</label>
+                    <InputText id="ubicacion" class="input" @bind-Value="evento.Ubicacion" />
+                </div>
+
+                <div class="campo">
+                    <label for="fecha">Fecha del Evento</label>
+                    <InputDate id="fecha" class="input" @bind-Value="evento.Fecha"
+                               min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                </div>
+
 
                 <div class="campo">
                     <label for="cantidadSensores">Cantidad de Sensores</label>
@@ -95,6 +111,7 @@
                 <div class="boton-container">
                     <button type="submit" class="boton-guardar">Guardar Evento</button>
                 </div>
+
             </div>
         </EditForm>
     </div>

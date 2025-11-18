@@ -1,36 +1,40 @@
 ﻿@page "/"
+@using Eventos_PuntoNet.Components.Models
+@using Eventos_PuntoNet.Components.Data
+@using Microsoft.EntityFrameworkCore
+@inject NavigationManager NavigationManager
+@inject IDbContextFactory<AppDbContext> DbFactory
+
+@rendermode InteractiveServer
 
 <link href="css/site.css" rel="stylesheet" />
 
 
-<!-- CARRUSEL PRINCIPAL -->
+    <!-- CARRUSEL DINAMICO DE EVENTOS -->
 
 <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
     <div class="carousel-inner">
 
-        <div class="carousel-item active">
-            <img src="img/ciclistas.png" class="d-block w-100" alt="Ciclistas" />
-            <div class="carousel-caption d-none d-md-block">
-                <h1 class="titulo-hero">Clásica Carrera 10K de San Fernando</h1>
-                <button class="btn btn-dark btn-lg">Registrarse</button>
-            </div>
-        </div>
+        @if (eventosRandom.Count > 0)
+        {
+            @foreach (var (evento, index) in eventosRandom.Select((e, i) => (e, i)))
+            {
+                <div class="carousel-item @(index == 0 ? "active" : "")">
+                    <img src="@ConvertirImagen(evento.Imagen!)" class="d-block w-100" alt="@evento.Nombre" />
 
-        <div class="carousel-item">
-            <img src="img/corredores1.png" class="d-block w-100" alt="Corredores1" />
-            <div class="carousel-caption d-none d-md-block">
-                <h1 class="titulo-hero">Entrená con los mejores</h1>
-                <button class="btn btn-dark btn-lg">Ver Más</button>
-            </div>
-        </div>
+                    <div class="carousel-caption d-none d-md-block">
+                        <h1 class="titulo-hero">@evento.Nombre</h1>
 
-        <div class="carousel-item">
-            <img src="img/corredores3.png" class="d-block w-100" alt="Corredores3" />
-            <div class="carousel-caption d-none d-md-block">
-                <h1 class="titulo-hero">Viví la experiencia Sport Event</h1>
-                <button class="btn btn-dark btn-lg">Inscribirme</button>
-            </div>
-        </div>
+                        <button class="btn btn-dark btn-lg"
+
+                                @onclick="() => IrAEvento(evento.Id)">
+                                Ver evento
+
+                        </button>
+                    </div>
+                </div>
+            }
+        }
     </div>
 
     <!-- Controles -->
@@ -89,3 +93,30 @@
         <img src="img/patrons.png" class="logos-patrocinadores" alt="Patrocinadores" />
     </div>
 </section>
+
+
+@code {
+    private List<Evento> eventosRandom = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+
+        eventosRandom = await context.Eventos
+            .Where(e => e.Imagen != null)
+            .OrderBy(e => Guid.NewGuid())
+            .Take(3)
+            .ToListAsync();
+    }
+
+    string ConvertirImagen(byte[] imagen)
+    {
+        return $"data:image/jpeg;base64,{Convert.ToBase64String(imagen)}";
+    }
+
+    private void IrAEvento(int id)
+    {
+        NavigationManager.NavigateTo($"/eventos/{id}/comprar");
+        
+    }
+}
