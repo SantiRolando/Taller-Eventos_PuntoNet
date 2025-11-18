@@ -1,0 +1,73 @@
+﻿
+@{
+    ViewData["Title"] = "Evento en Vivo";
+}
+
+<div class="text-center justify-content-center">
+    <h2 class="mt-4 text-white">@Model.Titulo</h2>
+    <p class="text-white">@Model.Descripcion</p>
+    <p class="text-white"><strong>Fecha:</strong> @Model.Fecha</p>
+    <img src="@Model.ImagenUrl" alt="@Model.Titulo" class="img-fluid mb-4" />
+</div>
+
+<div class="container text-center">
+    <div class="row align-items-center" style="min-height: 60vh;">
+        <div class="col">
+            <input type="text" id="dorsalInput"
+                   class="form-control mb-2 text-center"
+                   placeholder="Ingrese dorsal"
+                   style="max-width: 250px; margin: auto;" />
+
+            <button onclick="buscarCorredor()" class="btn btn-primary mt-2">
+                Seguir corredor
+            </button>
+        </div>
+
+        <div class="col mt-3" id="infoCorredor">
+            <p>Esperando datos...</p>
+        </div>
+    </div>
+
+    <div id="debug" class="text-danger small mt-3"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
+<script>
+    // URL del Hub remoto (proyecto Razor)
+    const hubUrl = "https://localhost:7163/EventoHub";
+
+    let connection = new signalR.HubConnectionBuilder()
+        .withUrl(hubUrl)
+        .withAutomaticReconnect()
+        .build();
+
+    // Conectar al hub
+    connection.start()
+        .then(() => console.log("Conectado al hub remoto"))
+        .catch(err => document.getElementById("debug").innerText = err);
+
+    // Recibir actualizaciones del corredor
+    connection.on("RecibirCorredor", (corredor) => {
+        document.getElementById("infoCorredor").innerHTML = `
+            <h4><b>Dorsal:</b> ${corredor.dorsal_Atleta}</h4>
+            <p><b>Sensor:</b> ${corredor.id_Sensor}</p>
+            <p style="color: green">
+                <b>Tiempo:</b> ${new Date(corredor.tiempo).toLocaleTimeString()}
+            </p>
+        `;
+    });
+
+    // Enviar dorsal al hub
+    function buscarCorredor() {
+        const dorsal = parseInt(document.getElementById("dorsalInput").value);
+        if (isNaN(dorsal)) {
+            document.getElementById("debug").innerText = "Ingrese un número válido";
+            return;
+        }
+
+        connection.invoke("IniciarSeguimiento", dorsal)
+            .then(() => console.log("Seguimiento iniciado"))
+            .catch(err => document.getElementById("debug").innerText = err);
+    }
+</script>

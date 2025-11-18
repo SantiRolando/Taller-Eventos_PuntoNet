@@ -12,6 +12,7 @@ namespace Eventos_PuntoNet.Components.Models
         [Required]
         public string Nombre { get; set; } = string.Empty;
 
+        public bool Activo { get; set; }
         public int Km { get; set; }
         public int Cantidad_Inscritos { get; set; }
         public int Cantidad_Kits { get; set; }
@@ -21,5 +22,8 @@ namespace Eventos_PuntoNet.Components.Models
         public ICollection<Inscripcion>? Inscripciones { get; set; }
         public ICollection<Sensor>? Sensores { get; set; }
         public ICollection<Leaderboard>? Leaderboard { get; set; }
+
+
+
     }
 }
