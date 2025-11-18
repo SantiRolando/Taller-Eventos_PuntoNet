@@ -12,7 +12,7 @@ namespace Eventos_PuntoNet.Components.Models
     public int Id { get; set; }
 
     [ForeignKey("Usuario")]
-    public int Ci_Usuario { get; set; }
+    public string Ci_Usuario { get; set; }
 
     [ForeignKey("Evento")]
     public int Id_Evento { get; set; }

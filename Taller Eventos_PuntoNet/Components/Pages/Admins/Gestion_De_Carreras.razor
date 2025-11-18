@@ -1,171 +1,186 @@
-﻿@page "/admin/GestorCarreara"
-@using System.Diagnostics
+@page "/admin/GestorCarrera"
+@using Eventos_PuntoNet.Components.Models
+@using Eventos_PuntoNet.Components.Data
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<AppDbContext> DbFactory
 @inject NavigationManager Navigation
 
 <link href="/css/site.css" rel="stylesheet" />
 
-<PageTitle>Gestion de Carreras</PageTitle>
+@rendermode InteractiveServer
 
+<PageTitle>Gestión de Carreras</PageTitle>
 
-<div class="page-container ml-4 d-flex">
+<div class="gestor-carreras">
 
-    <!--Contenido SideBar-->
+    <section class="contenido">
 
-    <div class="d-flex flex-column align-items-start justify-content-center" style="height: 100vh;">
-        <div class=" m-4 bg-light p-4 rounded-3 w-100 shadow-lg p-3 mb-5 bg-body-tertiary rounded border" style="max-width: 300px; min-height: 400px;">
-
-            <h5 class="text-center fw-bold mb-4">Opciones</h5>
-
-            <ul class="nav nav-pills flex-column mb-auto">
-                <li class="nav-item mb-2">
-                    <a href="/admin/GestorCarreara" class="nav-link active d-flex align-items-center">
-                        🏁 <span class="ms-2">Gestión de Carreras</span>
-                    </a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a href="/admin/GestorCorredores" class="nav-link text-dark d-flex align-items-center">
-                        👟 <span class="ms-2">Gestión de Corredores</span>
-                    </a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a href="/admin/MiPerfil" class="nav-link text-dark  d-flex align-items-center">
-                        👤 <span class="ms-2">Mi Perfil</span>
-                    </a>
-                </li>
-            </ul>
-
-            <hr>
-
-            <div class="mt-auto">
-                <button class="btn btn-outline-danger w-100 mb-2 d-flex align-items-center justify-content-center">
-                    🚪 <span class="ms-2">Salir</span>
-                </button>
-                <button class="btn btn-outline-success w-100 d-flex align-items-center justify-content-center">
-                    🏠 <span class="ms-2">Home</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-
-
-    <!--Contenido Main-->
-    <section class="main-content flex-grow-1 p-4">
-        <h1 class="Title"> Gestion de Carreras</h1>
-
-        <!--Barra de Busqueda-->
-        <div class="input-group rounded-pill shadow-sm" style="max-width: 300px;">
-            <span class="input-group-text bg-white border-0" id="basic-addon1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                     class="bi bi-search" viewBox="0 0 16 16">
-                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0">
-                    </path>
-                </svg>
-            </span>
-            <input type="text" class="form-control border-0" placeholder="Ingrese una carrera"
-                   aria-label="Input group example" aria-describedby="basic-addon1">
+        <div class="header">
+            <h1>Gestión de Carreras</h1>
+            <a href="/admin/crear-evento" class="btn-crear">➕ Crear Evento</a>
         </div>
 
+        
+        <div class="busqueda">
+            <input type="text" placeholder="Buscar evento..." @bind="searchTerm" @bind:event="oninput" />
+        </div>
 
-        <!--Lista de Carreras-->
-        <div class="Lista-de-Carrera mt-2">
-            <!--Carta de las Carreras-->
-            @foreach (var carrera in carrerasFiltradas)
+        <br />
+        <br />
+
+       
+        <div class="lista-carreras">
+            @foreach (var evento in eventosPaginados)
             {
-                <div class=" card mb-3 border shadow" style="max-width: auto; border-bottom: 2px solid #f0f0f0; ">
-                    <div class="row g-0">
-                        <div class="col-md-4">
-                            <img src="https://municipiob.montevideo.gub.uy/sites/municipiob/files/styles/620x410/public/Nota%20web%20%283%29_13.png?itok=DcqIlwRS" class="img-fluid rounded-start" alt="...">
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <h3 class="card-title">@carrera.Nombre</h3>
-                                <p><i>📅</i><b>Fecha:</b>@carrera.Fecha.ToShortDateString()</p>
-                                <p><i>🏃‍♂️</i><b>Corredores:</b> @carrera.Corredores</p>
-                                <p><i>📏</i><b>Distancia:</b> @carrera.Distancia km</p>
-                                <p>
-                                    <b>Status:</b>
-                                    <span class="@((carrera.Abierta ? "status-abierta" : "status-cerrada"))" @(carrera.abierta ? "Abierta : Cerrada" )>
-                                    </span>
-                                </p>
-                            </div>
-                            <div class="card-actions">
-                                <a href="/admin/OpcionesDeCarrera">
-                              <button class="btn-lg rounded-pill m-3 shadow" style="color: white; background:#007bff"> Opciones </button>
-                              </a>  
-                                <button class="btn-lg rounded-pill btn-outline-danger shadow">Eliminar</button>
-                              
+                <div class="carrera-card">
+
                    
-                            </div>
+                    @if (evento.Imagen != null)
+                    {
+                        <img src="data:image/png;base64,@Convert.ToBase64String(evento.Imagen)" />
+                    }
+                    else
+                    {
+                        <img src="/img/no-image.png" />
+                    }
+
+                    <div class="carrera-info">
+                        <h3>@evento.Nombre</h3>
+
+                        <p><b>📏 Distancia:</b> @evento.Km km</p>
+                        <p><b>📦 Kits:</b> @evento.Cantidad_Kits</p>
+                        <p><b>📡 Sensores:</b> @evento.Sensores?.Count</p>
+
+                        <div class="acciones">
+                            <button class="btn-opciones" @onclick="() => EditarEvento(evento.Id)">✏️ Editar</button>
+                            <button class="btn-eliminar" @onclick="() => ConfirmarEliminar(evento.Id)">🗑️ Eliminar</button>
                         </div>
                     </div>
                 </div>
-
-
             }
         </div>
-        
 
+        <br />
+        <br />
 
-        <!--Paginacion-->
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-end">
-                <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1">Previous</a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#">Next</a>
-                </li>
-            </ul>
-        </nav>
+        <div class="paginacion">
+            <button @onclick="PrevPage" disabled="@(paginaActual == 1)">Anterior</button>
+            <span>Página @paginaActual de @totalPaginas</span>
+            <button @onclick="NextPage" disabled="@(paginaActual == totalPaginas)">Siguiente</button>
+        </div>
+
+        @if (mostrarConfirmacion)
+        {
+            <div class="popup-overlay">
+                <div class="popup-box">
+
+                    <h3>⚠️ Confirmar eliminación</h3>
+                    <p>¿Seguro que deseas eliminar esta carrera?<br />Esta acción es irreversible.</p>
+
+                    <div class="popup-buttons">
+                        <button class="btn-confirmar" @onclick="() => EliminarEvento(eventoAEliminarId)">Eliminar</button>
+                        <button class="btn-cancelar" @onclick="() => mostrarConfirmacion = false">Cancelar</button>
+                    </div>
+
+                </div>
+            </div>
+        }
+
 
 
     </section>
-
-
 </div>
 
 
 
-
 @code {
+
+    private bool mostrarConfirmacion = false;
+    private int eventoAEliminarId = 0;
+
+   
+    
     private string searchTerm = "";
 
-    private List<Carrera> carreras = new()
-    {
-        new Carrera { Nombre = "Carrera 1", Fecha = DateTime.Now, Corredores = 50, Distancia = 5, Abierta = true },
-        new Carrera { Nombre = "Carrera 2", Fecha = DateTime.Now.AddDays(7), Corredores = 70, Distancia = 10, Abierta = false },
-        new Carrera { Nombre = "Carrera 3", Fecha = DateTime.Now.AddDays(14), Corredores = 30, Distancia = 7, Abierta = true },
-    };
+    private int paginaActual = 1;
+    private int porPagina = 5;
+    private int totalPaginas = 1;
 
-    private IEnumerable<Carrera> carrerasFiltradas => string.IsNullOrWhiteSpace(searchTerm)
-        ? carreras
-        : carreras.Where(c => c.Nombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+    private List<Evento> eventos = new();
+    private IEnumerable<Evento> eventosFiltrados =>
+        string.IsNullOrWhiteSpace(searchTerm)
+        ? eventos
+        : eventos.Where(e => e.Nombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
 
-    public class Carrera
+    private IEnumerable<Evento> eventosPaginados =>
+        eventosFiltrados
+        .Skip((paginaActual - 1) * porPagina)
+        .Take(porPagina);
+
+    protected override async Task OnInitializedAsync()
     {
-        public string Nombre { get; set; }
-        public DateTime Fecha { get; set; }
-        public int Corredores { get; set; }
-        public int Distancia { get; set; }
-        public bool Abierta { get; set; }
+        using var ctx = DbFactory.CreateDbContext();
+
+        eventos = await ctx.Eventos
+            .Include(e => e.Sensores)
+            .ToListAsync();
+
+        calcularPaginas();
     }
-    /*
-    private void IrAOpciones(Carrera carrera)
+
+    private void calcularPaginas()
     {
-        Debug.WriteLine($"Click en carrera: {carrera.Nombre}");
-        Navigation.NavigateTo($"/admin/OpcionesDeCarrera");
+        totalPaginas = (int)Math.Ceiling(eventosFiltrados.Count() / (double)porPagina);
+        if (paginaActual > totalPaginas) paginaActual = totalPaginas;
+        if (paginaActual < 1) paginaActual = 1;
     }
-    */
 
-    private int contador = 0;
-
-    private void ContarClicks()
+    private void PrevPage()
     {
-        contador++;
-        Console.WriteLine($"Clicks: {contador}");
+        if (paginaActual > 1)
+        {
+            paginaActual--;
+        }
+    }
+
+    private void NextPage()
+    {
+        if (paginaActual < totalPaginas)
+        {
+            paginaActual++;
+        }
+    }
+
+    private void EditarEvento(int id)
+    {
+        Navigation.NavigateTo($"/admin/editar-evento/{id}");
+    }
+
+    private async Task EliminarEvento(int id)
+    {
+        using var ctx = DbFactory.CreateDbContext();
+        var ev = await ctx.Eventos.Include(e => e.Sensores).FirstOrDefaultAsync(e => e.Id == id);
+
+        if (ev != null)
+        {
+            ctx.Eventos.Remove(ev);
+            await ctx.SaveChangesAsync();
+        }
+
+        // recargar lista
+        eventos = await ctx.Eventos.Include(e => e.Sensores).ToListAsync();
+        calcularPaginas();
+
+        
+        mostrarConfirmacion = false;
+
+        StateHasChanged();
+    }
+
+
+    private void ConfirmarEliminar(int id)
+    {
+        eventoAEliminarId = id;
+        mostrarConfirmacion = true;
     }
 }
