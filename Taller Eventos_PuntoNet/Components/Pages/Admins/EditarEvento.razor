@@ -53,6 +53,22 @@
                     </div>
 
                     <div class="campo">
+                        <label for="descripcion">Descripción</label>
+                        <InputTextArea id="descripcion" class="input" @bind-Value="evento.Descripcion" />
+                    </div>
+
+                    <div class="campo">
+                        <label for="ubicacion">Ubicación</label>
+                        <InputText id="ubicacion" class="input" @bind-Value="evento.Ubicacion" />
+                    </div>
+
+                    <div class="campo">
+                        <label for="fecha">Fecha del Evento</label>
+                        <InputDate id="fecha" class="input" @bind-Value="evento.Fecha"
+                                   min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    </div>
+
+                    <div class="campo">
                         <label>Cantidad de Sensores</label>
                         <InputNumber class="input" TValue="int" @bind-Value="cantidadSensores"
                                      @oninput="OnCantidadSensoresChanged" />
@@ -99,6 +115,8 @@
                             </div>
                         </div>
                     }
+
+                    <input type="checkbox" @bind="evento.EnVivo" /> Evento en vivo
 
                     
 

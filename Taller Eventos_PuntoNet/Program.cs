@@ -11,8 +11,6 @@ using Tarea_SingalR.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-
 builder.Services.AddHttpClient();
 builder.Services.AddSignalR();
 
@@ -68,7 +66,6 @@ if (!app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 app.UseRouting();
-
 app.UseSession();
 
 // 🔹 IMPORTANTE: agregar antes del mapeo de componentes
@@ -77,17 +74,11 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-
 app.UseCors();
 
 app.MapHub<EventoHub>("/EventoHub");
 
-
 var scope = app.Services.CreateScope();
 var hubContext = scope.ServiceProvider.GetRequiredService<IHubContext<EventoHub>>();
-
-
-
-
 
 app.Run();

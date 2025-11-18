@@ -5,23 +5,24 @@
 namespace TallerEventos_PuntoNet.Migrations
 {
     /// <inheritdoc />
-    public partial class AddImagenToEvento : Migration
+    public partial class eventoboolvivo : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<byte[]>(
-                name: "Imagen",
+            migrationBuilder.AddColumn<bool>(
+                name: "EnVivo",
                 table: "Eventos",
-                type: "varbinary(max)",
-                nullable: true);
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Imagen",
+                name: "EnVivo",
                 table: "Eventos");
         }
     }

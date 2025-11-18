@@ -1,140 +1,162 @@
-﻿@page "/eventos/{id}/comprar"
+﻿@page "/eventos/{Id:int}/comprar"
 
-@* PSEUDOCÓDIGO (plan detallado)
-   1. Recibir el parámetro `id` como string (Blazor siempre pasa string).
-   2. Intentar parsear `id` a `int` y guardarlo en `IdEvento`.
-   3. Buscar en la lista `eventos` un `Evento` cuyo `Id` coincida con `IdEvento`.
-   4. Si se encuentra:
-        - Asignar a `eventoSeleccionado`.
-        - Mostrar la información del evento: título, descripción, fecha e imagen.
-        - Mostrar un botón para "Comprar" (solo visual).
-      Si no se encuentra:
-        - Mostrar mensaje "Evento no encontrado" y sugerir regresar.
-   5. Mantener la lista `eventos` en memoria tal como estaba.
-   6. Todo el código debe estar dentro del mismo archivo `.razor` y usar `OnParametersSet`
-      para recalcular cuando cambie la ruta/ID.
-*@
+@using Eventos_PuntoNet.Components.Data
+@using Eventos_PuntoNet.Components.Models
+@using Microsoft.EntityFrameworkCore
+
+@inject IDbContextFactory<AppDbContext> DbFactory
 
 <PageTitle>SEM | Tickets</PageTitle>
 
 <div class="compra-evento">
+
     @if (eventoSeleccionado is not null)
     {
+
         <div class="card mb-3 evento-card-ticket">
             <div class="row g-0">
+
+                <img src="@(eventoSeleccionado.Imagen != null
+                                                  ? $"data:image/jpeg;base64,{Convert.ToBase64String(eventoSeleccionado.Imagen)}"
+                                                  : "/img/no-image.png")"
+                 class="img-fluid rounded-start"
+                 alt="@eventoSeleccionado.Nombre" />
+
                 <div class="col-md-6">
-                    <img src="@eventoSeleccionado.ImagenUrl" class="img-fluid rounded-start" alt="@eventoSeleccionado.Titulo">
-                </div>
-                <div class="col-md-6">
+
                     <div class="card-body informacion-evento">
-                        <h4 class="card-title">@eventoSeleccionado.Titulo</h4>
+
+                        <h4 class="card-title">@eventoSeleccionado.Nombre</h4>
+
                         <p class="card-text texto-rojo">@eventoSeleccionado.Ubicacion</p>
+
                         <p class="card-text">@eventoSeleccionado.Descripcion</p>
+
+                        <!-- Estado del evento -->
+                    @if (eventoSeleccionado.EnVivo)
+                        {
+                            <p>
+                                <b>🏁 Estado:</b>
+                                <span style="color: #28a745; font-weight: bold;">En vivo</span>
+                            </p>
+                        }
+                        else if (eventoSeleccionado.Leaderboard != null && eventoSeleccionado.Leaderboard.Any())
+                        {
+                            <p>
+                                <b>🏁 Estado:</b>
+                                <span style="color: #dc3545; font-weight: bold;">Terminado</span>
+                            </p>
+                        }
+                        else
+                        {
+                            <p>
+                                <b>🏁 Estado:</b>
+                                <span style="color: #f0ad4e; font-weight: bold;">No empezó</span>
+                            </p>
+                        }
+
                         <div class="evento-detalles">
                             <div>
                                 <i class="bi bi-geo-alt"></i>
-                                <p class="card-text"><small class="text-body-secondary">@eventoSeleccionado.Ubicacion</small></p>
+                                <p class="card-text"><small>@eventoSeleccionado.Ubicacion</small></p>
                             </div>
+
                             <div>
                                 <i class="bi bi-calendar4-event"></i>
-                                <p class="card-text"><small class="text-body-secondary">@eventoSeleccionado.Fecha</small></p>
+                                <p class="card-text"><small>@eventoSeleccionado.Fecha</small></p>
                             </div>
-                            <div>
-                                <i class="bi bi-clock"></i>
-                                <p class="card-text"><small class="text-body-secondary">@eventoSeleccionado.Duracion</small></p>
-                            </div>
+
                             <div>
                                 <i class="bi bi-compass"></i>
-                                <p class="card-text"><small class="text-body-secondary">@eventoSeleccionado.Distancia</small></p>
+                                <p class="card-text"><small>@eventoSeleccionado.Km</small></p>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
+
     }
-    else if (IdEvento == 0 && string.IsNullOrWhiteSpace(id))
-    {
-        <p>Parámetro de ID no proporcionado.</p>
-    }
-    else if (IdEvento == 0)
-    {
-        <p>El ID proporcionado no es válido.</p>
-    }
-    else
-    {
-        <p>Evento con ID <b>@IdEvento</b> no encontrado.</p>
-    }
+
 </div>
 
+<!-- SECCIÓN DE TICKETS / EN VIVO / TERMINADO -->
 <div class="seccion-tickets-evento">
     @if (eventoSeleccionado is not null)
     {
-        <div class="row justify-content-center g-4">
-            <h3>Comprar Tickets para @eventoSeleccionado.Titulo</h3>
-            <div class="col-md-4">
-                <div class="card card-ticket anticipadas">
-                    <div class="card-body">
-                        <h5 class="card-title">Anticipadas</h5>
-                        <p class="card-precio">$2.500</p> <!-- Modificar el precio para que se asigne de forma variable -->
-                        <button class="btn btn-comprar" @onclick="ComprarAnticipada">Comprar</button>
+        <!-- Evento en vivo -->
+        if (eventoSeleccionado.EnVivo)
+        {
+            <div class="text-center mt-4">
+                <a class="btn btn-danger btn-lg" href="/eventos/@eventoSeleccionado.Id/en-vivo">
+                    🔴 Ver Evento en Vivo
+                </a>
+            </div>
+        }
+        <!-- Evento terminado -->
+        else if (eventoSeleccionado.Leaderboard != null && eventoSeleccionado.Leaderboard.Any())
+        {
+            <div class="text-center mt-4">
+                <h3 class="text-muted">Este evento ya finalizó</h3>
+                <a class="btn btn-outline-light mt-3" href="/eventos/@eventoSeleccionado.Id/leaderboard">
+                    📊 Ver Resultados
+                </a>
+            </div>
+        }
+        <!-- Evento disponible para comprar -->
+        else
+        {
+            <div class="row justify-content-center g-4">
+                <h3>Comprar Tickets para @eventoSeleccionado.Nombre</h3>
+
+                <div class="col-md-4">
+                    <div class="card card-ticket anticipadas">
+                        <div class="card-body">
+                            <h5 class="card-title">Anticipadas</h5>
+                            <p class="card-precio">$2.500</p>
+                            <button class="btn btn-comprar" @onclick="ComprarAnticipada">Comprar</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card card-ticket">
-                    <div class="card-body">
-                        <h5 class="card-title">Generales</h5>
-                        <p class="card-precio">$3.200</p> <!-- Modificar el precio para que se asigne de forma variable -->
-                        <button class="btn btn-comprar" @onclick="ComprarGeneral">Comprar</button>
+
+                <div class="col-md-4">
+                    <div class="card card-ticket">
+                        <div class="card-body">
+                            <h5 class="card-title">Generales</h5>
+                            <p class="card-precio">$3.200</p>
+                            <button class="btn btn-comprar" @onclick="ComprarGeneral">Comprar</button>
+                        </div>
                     </div>
                 </div>
+
             </div>
-        </div>
+        }
     }
 </div>
 
 @code {
-    [Parameter]
-    public string id { get; set; }  // Blazor siempre pasa string
 
-    private int IdEvento;
+    [Parameter] public int Id { get; set; }
+
     private Evento? eventoSeleccionado;
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        // Intentar parsear el id
-        if (!int.TryParse(id, out IdEvento))
-        {
-            // Manejar error si no se puede parsear
-            IdEvento = 0;
-            eventoSeleccionado = null;
-            return;
-        }
+        using var ctx = DbFactory.CreateDbContext();
 
-        // Buscar evento en la lista
-        eventoSeleccionado = eventos.FirstOrDefault(e => e.Id == IdEvento);
+        eventoSeleccionado = await ctx.Eventos
+            .Include(e => e.Leaderboard)
+            .FirstOrDefaultAsync(e => e.Id == Id);
     }
 
     void ComprarAnticipada()
     {
-        Console.WriteLine("Compra de entrada anticipada iniciada.");
-        // Lógica para compra anticipada
+        Console.WriteLine("Compra anticipada para evento " + eventoSeleccionado?.Nombre);
     }
 
     void ComprarGeneral()
     {
-        Console.WriteLine("Compra de entrada general iniciada.");
-        // Lógica para compra general
+        Console.WriteLine("Compra general para evento " + eventoSeleccionado?.Nombre);
     }
-
-    record Evento(int Id, string Titulo, string Descripcion, string Fecha, string ImagenUrl, string Ubicacion, string Duracion, string Distancia);
-
-    List<Evento> eventos = new()
-    {
-        new(1, "Ironman Punta del Este", "Triatlón de larga distancia", "15/02/2026", "https://media.gq.com.mx/photos/60e5f796433a17b371256f2f/16:9/w_2560%2Cc_limit/ironman-1183785434.jpg", "Punta del Este, Uruguay", "10h 30m", "226 km"),
-        new(2, "Ironman Francia", "Competencia internacional", "01/04/2026", "https://www.triatlonweb.es/uploads/s1/11/88/95/22/por-que-deberi-as-hacer-en-francia-una-prueba-ironman.jpeg", "Niza, Francia", "9h 45m", "226 km"),
-        new(3, "Ironman Brasil", "Uno de los eventos más duros del circuito, con paisajes increíbles.", "20/06/2026", "https://blog.endurancegroup.org/wp-content/uploads/2019/01/1307283066-1600.jpg", "Florianópolis, Brasil", "11h 10m", "226 km"),
-        new(4, "Ironman Lanzarote", "Evento legendario en la isla, conocido por su dificultad y belleza.", "05/09/2026", "https://lanzarotesportsdestination.com/wp-content/uploads/2022/03/LanzaroteESD-Pedro-Perez-Ironman-70.3-Lanzarote-2022-84-78_LD.jpg", "Lanzarote, España", "12h 05m", "226 km")
-    };
 }

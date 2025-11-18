@@ -77,6 +77,9 @@
 
     private async Task AddUsuario()
     {
+
+        Console.WriteLine("entre al add");
+
         if (isSubmitting) return;
 
         isSubmitting = true;
@@ -94,11 +97,14 @@
                 .AsNoTracking()
                 .AnyAsync(u => u.Ci == ciNormalized || u.Email.ToLower() == emailNormalized);
 
+            Console.WriteLine("existe usuario =" + existe);
             if (existe)
             {
                 errorMessage = "Ya existe un usuario registrado con esa cédula o correo electrónico.";
                 return;
             }
+
+            Console.WriteLine("datos usuario" + usuario.Ci);
 
             Usuario entidad = usuario.TipoUsuario == "Administrador"
                 ? new Admin
@@ -121,18 +127,11 @@
             context.Usuarios.Add(entidad);
             await context.SaveChangesAsync();
 
-            // limpiar formulario
-            usuario = new Usuario { TipoUsuario = "Participante" };
-            editContext = new EditContext(usuario);
-            StateHasChanged();
+            
 
             Console.WriteLine("AddUsuario: guardado correctamente. Navegando a / ...");
 
-            // Navegación forzada (recarga completa)
-            await InvokeAsync(() => NavigationManager.NavigateTo("/", forceLoad: true));
-
-            // Fallback JS (por si NavigateTo no provoca cambio visible)
-            await JS.InvokeVoidAsync("location.replace", "/");
+            NavigationManager.NavigateTo("/", true);
         }
         catch (DbUpdateException ex)
         {

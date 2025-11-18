@@ -20,7 +20,8 @@ namespace TallerEventos_PuntoNet.Migrations
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Km = table.Column<int>(type: "int", nullable: false),
                     Cantidad_Inscritos = table.Column<int>(type: "int", nullable: false),
-                    Cantidad_Kits = table.Column<int>(type: "int", nullable: false)
+                    Cantidad_Kits = table.Column<int>(type: "int", nullable: false),
+                    Imagen = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -49,7 +50,7 @@ namespace TallerEventos_PuntoNet.Migrations
                     Id_Sensor = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Distancia = table.Column<int>(type: "int", nullable: false),
-                    EventoId = table.Column<int>(type: "int", nullable: true)
+                    EventoId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -58,7 +59,8 @@ namespace TallerEventos_PuntoNet.Migrations
                         name: "FK_Sensores_Eventos_EventoId",
                         column: x => x.EventoId,
                         principalTable: "Eventos",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(

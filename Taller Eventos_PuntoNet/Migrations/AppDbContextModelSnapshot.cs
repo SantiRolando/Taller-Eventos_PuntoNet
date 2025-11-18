@@ -36,6 +36,15 @@ namespace TallerEventos_PuntoNet.Migrations
                     b.Property<int>("Cantidad_Kits")
                         .HasColumnType("int");
 
+                    b.Property<string>("Descripcion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("EnVivo")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
                     b.Property<byte[]>("Imagen")
                         .HasColumnType("varbinary(max)");
 
@@ -44,6 +53,9 @@ namespace TallerEventos_PuntoNet.Migrations
 
                     b.Property<string>("Nombre")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Ubicacion")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace TallerEventos_PuntoNet.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251106102303_Initial")]
-    partial class Initial
+    [Migration("20251118013312_eventoboolvivo")]
+    partial class eventoboolvivo
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,6 +38,12 @@ namespace TallerEventos_PuntoNet.Migrations
 
                     b.Property<int>("Cantidad_Kits")
                         .HasColumnType("int");
+
+                    b.Property<bool>("EnVivo")
+                        .HasColumnType("bit");
+
+                    b.Property<byte[]>("Imagen")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int>("Km")
                         .HasColumnType("int");
@@ -150,7 +156,7 @@ namespace TallerEventos_PuntoNet.Migrations
                     b.Property<int>("Distancia")
                         .HasColumnType("int");
 
-                    b.Property<int?>("EventoId")
+                    b.Property<int>("EventoId")
                         .HasColumnType("int");
 
                     b.HasKey("Id_Sensor");
@@ -256,9 +262,13 @@ namespace TallerEventos_PuntoNet.Migrations
 
             modelBuilder.Entity("Eventos_PuntoNet.Components.Models.Sensor", b =>
                 {
-                    b.HasOne("Eventos_PuntoNet.Components.Models.Evento", null)
+                    b.HasOne("Eventos_PuntoNet.Components.Models.Evento", "Evento")
                         .WithMany("Sensores")
-                        .HasForeignKey("EventoId");
+                        .HasForeignKey("EventoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Evento");
                 });
 
             modelBuilder.Entity("Eventos_PuntoNet.Components.Models.Evento", b =>
