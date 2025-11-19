@@ -11,18 +11,22 @@ using Tarea_SingalR.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 builder.Services.AddHttpClient();
 builder.Services.AddSignalR();
 
 builder.Services.AddSingleton<SeguimientoService>();
 
 //builder.Services.AddQuickGridEntityFrameworkAdapter();
-
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 
 // 🔹 Servicios de Razor y Blazor
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+
+builder.Services.AddRazorPages();
+
 
 builder.Services.AddCors(options =>
 {
@@ -66,6 +70,11 @@ if (!app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 app.UseRouting();
+
+app.MapRazorPages();
+app.MapFallbackToPage("/_Host");
+
+
 app.UseSession();
 
 // 🔹 IMPORTANTE: agregar antes del mapeo de componentes
