@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36518.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Taller Eventos_PuntoNet", "Taller Eventos_PuntoNet\Taller Eventos_PuntoNet.csproj", "{753F6B2B-5AC7-41A2-BEB9-69F5F7AD135F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventoenVivo", "EventoenVivo\EventoenVivo.csproj", "{2C040E9A-AC4D-4620-9EAB-C80DF84BB1A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{753F6B2B-5AC7-41A2-BEB9-69F5F7AD135F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{753F6B2B-5AC7-41A2-BEB9-69F5F7AD135F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{753F6B2B-5AC7-41A2-BEB9-69F5F7AD135F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C040E9A-AC4D-4620-9EAB-C80DF84BB1A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C040E9A-AC4D-4620-9EAB-C80DF84BB1A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C040E9A-AC4D-4620-9EAB-C80DF84BB1A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C040E9A-AC4D-4620-9EAB-C80DF84BB1A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
