@@ -1,56 +1,275 @@
 ﻿@page "/admin/GestorCorredores"
-@using System.Diagnostics
-<link href="/css/site.css" rel="stylesheet" />
 
-<PageTitle>Gestion de Corredores</PageTitle>
+@using Eventos_PuntoNet.Components.Models
+@using Eventos_PuntoNet.Components.Data
+@using Microsoft.EntityFrameworkCore
+
+@inject IDbContextFactory<AppDbContext> DbFactory
 
 
-<div class="page-container ml-4 d-flex">
+@rendermode InteractiveServer
 
+<PageTitle>Gestión de Corredores</PageTitle>
 
-    
+<div class="gestor-corredores-page ml-4 d-flex">
 
-    <!--Contenido Main-->
-    <div class="Form-Container d-flex justify-content-center align-items-center mt-5 flex-grow-1 p-4" style="height: 100vh;">
+    <div class="Form-Container d-flex justify-content-center align-items-center mt-5 flex-grow-1 p-4"
+         style="height: 100vh;">
         <div class="card p-5 shadow w-100"
              style="background-color: #d9d9d9; border-radius: 15px; max-width: 650px; min-width: 500px; min-height: 700px;">
 
             <h4 class="mb-4 text-start fw-bold">Gestor Corredor</h4>
 
+            <!-- Buscar participante por CI -->
             <div class="mb-4">
                 <label class="form-label fw-semibold">Cédula</label>
-                <input type="text" id="cedula" class="form-control form-control-lg" placeholder="5.4215.568-2">
+                <input type="text" class="form-control form-control-lg" placeholder="4.321.654-2"
+                       @bind="ci" />
+                <button class="btn btn-dark mt-2" @onclick="BuscarParticipante">Buscar</button>
+
+                @if (participante is null && busco)
+                {
+                    <p class="text-danger mt-2">No se encontró un participante con esa cédula.</p>
+                }
+                @if (participante is not null)
+                {
+                    <p class="text-success mt-2 fw-bold">Participante: @participante.Nombre</p>
+                }
             </div>
 
-            <div class="mb-4">
-                <label for="dorsal" class="form-label fw-semibold">Dorsal</label>
-                <select id="dorsal" class="form-select form-select-lg">
-                    <option>25</option>
-                    <option>35</option>
-                    <option>36</option>
-                </select>
-            </div>
-
-            <div class="mb-4">
-                <label for="chip" class="form-label fw-semibold">Chip</label>
-                <select id="chip" class="form-select form-select-lg">
-                    <option>100</option>
-                    <option>101</option>
-                    <option>105</option>
-                </select>
-            </div>
-
+            <!-- Evento -->
             <div class="mb-4">
                 <label class="form-label fw-semibold">Carrera</label>
-                <input type="text" id="Carrera" class="form-control form-control-lg" placeholder="Ingrese el nombre de la Carrera...">
+                <select class="form-select form-select-lg"
+                        @onchange="EventoCambiado">
+                    <option value="">Seleccione un evento</option>
+                    @foreach (var e in eventos)
+                    {
+                        <option value="@e.Id">@e.Nombre (@e.Km km)</option>
+                    }
+                </select>
             </div>
 
+            <!-- Dorsal -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Dorsal</label>
+                <select class="form-select form-select-lg" @bind="dorsal">
+                    <option value="">Seleccione un dorsal</option>
+                    @foreach (var d in dorsalesDisponibles)
+                    {
+                        <option value="@d">@d</option>
+                    }
+                </select>
+            </div>
+
+            <!-- Chip -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Chip</label>
+                <select class="form-select form-select-lg" @bind="chip">
+                    <option value="">Seleccione un chip</option>
+                    @foreach (var c in chipsDisponibles)
+                    {
+                        <option value="@c">@c</option>
+                    }
+                </select>
+            </div>
+
+            
+
+            
 
             <hr style="border: 1px solid #333; margin-bottom: 35px;">
 
-            <button class="btn btn-dark btn-lg w-100 mt-5">Guardar Datos</button>
+            <button class="btn btn-dark btn-lg w-100 mt-5" @onclick="GuardarInscripcion">
+                Guardar Datos
+            </button>
+
+            @if (!string.IsNullOrEmpty(msj))
+            {
+                <p class="mt-3 @msjColor">@msj</p>
+            }
+
         </div>
     </div>
 
-    </div>
-    
+</div>
+
+@code {
+
+    string ci = "";
+    Participante? participante;
+    bool busco = false;
+
+    int? idEvento;
+
+    // Listas dinámicas
+    List<Evento> eventos = new();
+    List<int> dorsalesDisponibles = new();
+    List<int> chipsDisponibles = new();
+
+    int? dorsal;
+    int? chip;
+
+    string msj = "";
+    string msjColor = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var ctx = DbFactory.CreateDbContext();
+        eventos = await ctx.Eventos
+            .OrderBy(e => e.Fecha)
+            .ToListAsync();
+    }
+
+    async Task BuscarParticipante()
+    {
+        busco = true;
+
+        using var ctx = DbFactory.CreateDbContext();
+        participante = await ctx.Usuarios
+            .OfType<Participante>()
+            .FirstOrDefaultAsync(u => u.Ci == ci);
+    }
+
+    async Task EventoCambiado(ChangeEventArgs e)
+    {
+        idEvento = int.Parse(e.Value.ToString());
+
+        using var ctx = DbFactory.CreateDbContext();
+
+        var evento = await ctx.Eventos
+            .FirstOrDefaultAsync(x => x.Id == idEvento);
+
+        if (evento == null) return;
+
+        // Debug
+        Console.WriteLine($"Evento seleccionado: {evento.Nombre}");
+        Console.WriteLine($"Kits: {evento.Cantidad_Kits}");
+
+        var dorsalesUsados = await ctx.Inscripciones
+            .Where(i => i.Id_Evento == idEvento)
+            .Select(i => i.Dorsal_Atleta)
+            .ToListAsync();
+
+        dorsalesDisponibles = Enumerable
+            .Range(1, evento.Cantidad_Kits)
+            .Where(n => !dorsalesUsados.Contains(n))
+            .ToList();
+
+        var chipsUsados = await ctx.Inscripciones
+            .Where(i => i.Id_Evento == idEvento)
+            .Select(i => i.Id_Chip)
+            .ToListAsync();
+
+        chipsDisponibles = Enumerable
+            .Range(1, evento.Cantidad_Kits)
+            .Where(n => !chipsUsados.Contains(n))
+            .ToList();
+
+        // Debug
+        Console.WriteLine("Dorsales disponibles: " + string.Join(", ", dorsalesDisponibles));
+        Console.WriteLine("Chips disponibles: " + string.Join(", ", chipsDisponibles));
+
+        dorsal = null;
+        chip = null;
+    }
+
+    async Task GuardarInscripcion()
+    {
+        msj = "";
+        msjColor = "text-danger";
+
+        if (participante is null)
+        {
+            msj = "Debe buscar un participante válido.";
+            return;
+        }
+
+        if (idEvento is null)
+        {
+            msj = "Debe seleccionar un evento.";
+            return;
+        }
+
+        if (dorsal is null || chip is null)
+        {
+            msj = "Debe seleccionar dorsal y chip.";
+            return;
+        }
+
+        using var ctx = DbFactory.CreateDbContext();
+
+        bool yaInscripto = await ctx.Inscripciones
+            .AnyAsync(i => i.Ci_Usuario == participante.Ci && i.Id_Evento == idEvento);
+
+        if (yaInscripto)
+        {
+            msj = "Este participante ya está inscripto en este evento.";
+            return;
+        }
+
+        var insc = new Inscripcion
+        {
+            Ci_Usuario = participante.Ci,
+            Id_Evento = idEvento.Value,
+            Id_Chip = chip.Value,
+            Dorsal_Atleta = dorsal.Value
+        };
+
+        ctx.Inscripciones.Add(insc);
+        await ctx.SaveChangesAsync();
+
+        msj = "Inscripción guardada correctamente.";
+        msjColor = "text-success";
+    }
+
+    async Task OnEventoChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int parsed))
+        {
+            idEvento = parsed;
+            await CargarDatosEvento();
+        }
+    }
+
+    async Task CargarDatosEvento()
+    {
+        using var ctx = DbFactory.CreateDbContext();
+
+        var evento = await ctx.Eventos
+            .FirstOrDefaultAsync(x => x.Id == idEvento);
+
+        if (evento == null) return;
+
+        Console.WriteLine($"DEBUG EVENTO SELECCIONADO:");
+        Console.WriteLine($"Nombre: {evento.Nombre}");
+        Console.WriteLine($"Kits: {evento.Cantidad_Kits}");
+        Console.WriteLine($"Inscritos: {evento.Cantidad_Inscritos}");
+
+        var dorsalesUsados = await ctx.Inscripciones
+            .Where(i => i.Id_Evento == idEvento)
+            .Select(i => i.Dorsal_Atleta)
+            .ToListAsync();
+
+        dorsalesDisponibles = Enumerable
+            .Range(1, evento.Cantidad_Kits)
+            .Where(n => !dorsalesUsados.Contains(n))
+            .ToList();
+
+        var chipsUsados = await ctx.Inscripciones
+            .Where(i => i.Id_Evento == idEvento)
+            .Select(i => i.Id_Chip)
+            .ToListAsync();
+
+        chipsDisponibles = Enumerable
+            .Range(1, evento.Cantidad_Kits)
+            .Where(n => !chipsUsados.Contains(n))
+            .ToList();
+
+        dorsal = null;
+        chip = null;
+    }
+
+
+
+}

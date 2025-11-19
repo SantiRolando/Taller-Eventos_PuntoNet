@@ -15,13 +15,16 @@
             <li><NavLink href="/">Inicio</NavLink></li>
             <li><NavLink href="/resultados">Resultados</NavLink></li>
             <li><NavLink href="/eventos">Eventos</NavLink></li>
-            <li><NavLink href="/servicios">Servicios</NavLink></li>
-            <li><NavLink href="/contacto">Contacto</NavLink></li>
+
             @if (usuario != null && usuario.TipoUsuario == "Administrador")
             {
+
                 <li><NavLink href="/admin/MiPerfil">Administración</NavLink></li>
+                <li><NavLink href="/admin/GestorCarrera">Carreras</NavLink></li>
+                <li><NavLink href="/admin/GestorCorredores">Corredores</NavLink></li>
 
             }
+
         </ul>
     </div>
 
