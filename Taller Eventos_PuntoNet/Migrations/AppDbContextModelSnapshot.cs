@@ -30,6 +30,9 @@ namespace TallerEventos_PuntoNet.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
                     b.Property<int>("Cantidad_Inscritos")
                         .HasColumnType("int");
 

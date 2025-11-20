@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace TallerEventos_PuntoNet.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251117013941_Initial")]
-    partial class Initial
+    [Migration("20251119031333_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,11 +33,23 @@ namespace TallerEventos_PuntoNet.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
                     b.Property<int>("Cantidad_Inscritos")
                         .HasColumnType("int");
 
                     b.Property<int>("Cantidad_Kits")
                         .HasColumnType("int");
+
+                    b.Property<string>("Descripcion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("EnVivo")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Imagen")
                         .HasColumnType("varbinary(max)");
@@ -47,6 +59,9 @@ namespace TallerEventos_PuntoNet.Migrations
 
                     b.Property<string>("Nombre")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Ubicacion")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

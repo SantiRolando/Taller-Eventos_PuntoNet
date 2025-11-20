@@ -7,14 +7,15 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using Taller_Eventos_PuntoNet.Components;
-using Tarea_SingalR.Hubs;
+using Eventos_PuntoNet.Components.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpClient();
 builder.Services.AddSignalR();
 
-builder.Services.AddSingleton<SeguimientoService>();
+builder.Services.AddScoped<SeguimientoService>();
+
 
 //builder.Services.AddQuickGridEntityFrameworkAdapter();
 

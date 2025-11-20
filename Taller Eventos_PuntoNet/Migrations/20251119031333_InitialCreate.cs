@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TallerEventos_PuntoNet.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,9 +18,14 @@ namespace TallerEventos_PuntoNet.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Activo = table.Column<bool>(type: "bit", nullable: false),
                     Km = table.Column<int>(type: "int", nullable: false),
                     Cantidad_Inscritos = table.Column<int>(type: "int", nullable: false),
                     Cantidad_Kits = table.Column<int>(type: "int", nullable: false),
+                    EnVivo = table.Column<bool>(type: "bit", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Ubicacion = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Imagen = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
                 },
                 constraints: table =>

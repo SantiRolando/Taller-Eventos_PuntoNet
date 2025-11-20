@@ -18,7 +18,7 @@
                    placeholder="Ingrese dorsal"
                    style="max-width: 250px; margin: auto;" />
 
-            <button onclick="buscarCorredor()" class="btn btn-primary mt-2">
+            <button id="seguirBtn" onclick="buscarCorredor()" class="btn btn-primary mt-2">
                 Seguir corredor
             </button>
         </div>
@@ -28,46 +28,84 @@
         </div>
     </div>
 
+
+    <a href="/Evento/Top10/@Model.Id?nombre=@Model.Titulo" class="btn btn-success btn-lg">
+        Ver Top 10 Ganadores
+    </a>
+
+
+
     <div id="debug" class="text-danger small mt-3"></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
 
 <script>
-    // URL del Hub remoto (proyecto Razor)
-    const hubUrl = "https://localhost:7163/EventoHub";
+    // Id de la carrera desde Razor
+    const carreraId = @Model.Id;
 
+    // Crear conexión al Hub
     let connection = new signalR.HubConnectionBuilder()
-        .withUrl(hubUrl)
+        .withUrl("https://localhost:7163/EventoHub")
         .withAutomaticReconnect()
         .build();
 
-    // Conectar al hub
+    // Conectar al Hub
     connection.start()
         .then(() => console.log("Conectado al hub remoto"))
         .catch(err => document.getElementById("debug").innerText = err);
 
-    // Recibir actualizaciones del corredor
+    // Recibir datos de corredor
     connection.on("RecibirCorredor", (corredor) => {
-        document.getElementById("infoCorredor").innerHTML = `
-            <h4><b>Dorsal:</b> ${corredor.dorsal_Atleta}</h4>
-            <p><b>Sensor:</b> ${corredor.id_Sensor}</p>
-            <p style="color: green">
-                <b>Tiempo:</b> ${new Date(corredor.tiempo).toLocaleTimeString()}
-            </p>
-        `;
+        const infoDiv = document.getElementById("infoCorredor");
+
+        if (corredor.terminado) {
+            infoDiv.innerHTML = `
+                <h4>Dorsal: ${corredor.dorsal_Atleta}</h4>
+                <p>¡CORREDOR TERMINÓ LA CARRERA!</p>
+            `;
+
+            // Rehabilitar input y botón
+            document.getElementById("dorsalInput").disabled = false;
+            document.getElementById("seguirBtn").disabled = false;
+        } else {
+            infoDiv.innerHTML = `
+                <h4>Dorsal: ${corredor.dorsal_Atleta}</h4>
+                <p>Sensor actual: ${corredor.id_Sensor}</p>
+                <p style="color: green">Tiempo: ${new Date(corredor.tiempo).toLocaleTimeString()}</p>
+            `;
+        }
     });
 
-    // Enviar dorsal al hub
+    // Recibir error si dorsal no existe
+    connection.on("RecibirError", (mensaje) => {
+        document.getElementById("debug").innerText = mensaje;
+        // Rehabilitar input y botón
+        document.getElementById("dorsalInput").disabled = false;
+        document.getElementById("seguirBtn").disabled = false;
+    });
+
+    // Función para iniciar seguimiento
     function buscarCorredor() {
         const dorsal = parseInt(document.getElementById("dorsalInput").value);
+
         if (isNaN(dorsal)) {
             document.getElementById("debug").innerText = "Ingrese un número válido";
             return;
         }
 
-        connection.invoke("IniciarSeguimiento", dorsal)
-            .then(() => console.log("Seguimiento iniciado"))
-            .catch(err => document.getElementById("debug").innerText = err);
+        // Limpiar mensajes y deshabilitar input y botón mientras sigue al corredor
+        document.getElementById("debug").innerText = "";
+        document.getElementById("dorsalInput").disabled = true;
+        document.getElementById("seguirBtn").disabled = true;
+
+        // Enviar al Hub: carreraId + dorsal
+        connection.invoke("IniciarSeguimiento", carreraId, dorsal)
+            .then(() => console.log(`Seguimiento iniciado: Carrera ${carreraId}, Dorsal ${dorsal}`))
+            .catch(err => {
+                document.getElementById("debug").innerText = err;
+                document.getElementById("dorsalInput").disabled = false;
+                document.getElementById("seguirBtn").disabled = false;
+            });
     }
 </script>

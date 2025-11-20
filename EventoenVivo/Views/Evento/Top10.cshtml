@@ -1,0 +1,80 @@
+﻿@{
+    ViewData["Title"] = "Top 10 Corredores";
+}
+
+<div class="text-center text-white my-5">
+    <h1 class="display-4 mt-5" style="color: black">@Model.Nombre</h1> <!-- Título centrado grande -->
+
+    <p class="lead">Actualización automática en tiempo real vía SignalR</p>
+</div>
+
+<div class="container mt-4">
+
+    <table class="table table-dark table-striped table-bordered text-center">
+        <thead>
+            <tr>
+                <th>Posición</th>
+                <th>Dorsal</th>
+                <th>Sensor</th>
+                <th>Tiempo</th>
+            </tr>
+        </thead>
+        <tbody id="tablaTop10">
+            <tr><td colspan="4">Esperando datos…</td></tr>
+        </tbody>
+    </table>
+
+    <div id="debug" class="text-danger mt-2"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
+<script>
+    const carreraId = @Model.Id;
+
+    // Conectar al Hub
+    let connection = new signalR.HubConnectionBuilder()
+        .withUrl("https://localhost:7163/EventoHub")
+        .withAutomaticReconnect()
+        .build();
+
+    connection.start()
+        .then(() => {
+            console.log("Conectado al hub");
+            pedirTop10();
+        })
+        .catch(err => document.getElementById("debug").innerText = err);
+
+    // Pedir top 10 al hub
+    function pedirTop10() {
+        connection.invoke("ObtenerTop10", carreraId)
+            .catch(err => document.getElementById("debug").innerText = err);
+    }
+
+    // Recibir Top 10
+       connection.on("RecibirTop10", (lista) => {
+        const tbody = document.getElementById("tablaTop10");
+
+        // Si el tbody todavía tiene la fila "Esperando datos…", la borramos
+        if (tbody.rows.length === 1 && tbody.rows[0].cells.length === 1) {
+            tbody.innerHTML = "";
+        }
+
+        lista.forEach((corredor) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${tbody.rows.length + 1}</td>
+                    <td>${corredor.dorsal}</td>
+                    <td>Finalizó</td>
+                    <td>${new Date(corredor.tiempo).toLocaleTimeString()}</td>
+                </tr>
+            `;
+        });
+    });
+
+
+    // Si hay error
+    connection.on("RecibirError", (msg) => {
+        document.getElementById("debug").innerText = msg;
+    });
+</script>
