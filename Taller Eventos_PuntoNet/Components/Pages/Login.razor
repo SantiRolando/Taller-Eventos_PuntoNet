@@ -1,5 +1,5 @@
 ﻿@page "/login"
-@rendermode InteractiveServer
+
 @using Microsoft.AspNetCore.Components
 @using Microsoft.EntityFrameworkCore
 @using Eventos_PuntoNet.Components.Models
@@ -9,13 +9,15 @@
 @inject NavigationManager NavigationManager
 @using System.Text.Json
 
+@rendermode InteractiveServer
+
 <PageTitle>Iniciar Sesión</PageTitle>
 
 <section class="login-section">
     <div class="login-card">
         <h2>Iniciar Sesión</h2>
 
-        <EditForm Model="@loginData">
+        <EditForm Model="@loginData" OnValidSubmit="@LoginUsuario" FormName="loginForm" class="login-form">
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" />
 
@@ -35,11 +37,7 @@
                            class="form-control" />
             </div>
 
-            <button type="button"
-                    class="btn-login-page"
-                    @onclick="() => LoginUsuario()">
-                Ingresar
-            </button>
+            <button type="submit" class="btn-login-page">Ingresar</button>
 
             @if (!string.IsNullOrEmpty(errorMessage))
             {

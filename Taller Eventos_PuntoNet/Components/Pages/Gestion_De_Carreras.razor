@@ -1,4 +1,4 @@
-@page "/admin/GestorCarrera"
+@page "/GestorCarrera"
 @using Eventos_PuntoNet.Components.Models
 @using Eventos_PuntoNet.Components.Data
 @using Microsoft.EntityFrameworkCore
@@ -16,7 +16,7 @@
 
         <div class="header">
             <h1>Gestión de Carreras</h1>
-            <a href="/admin/crear-evento" class="btn-crear">➕ Crear Evento</a>
+            <a href="/crear-evento" class="btn-crear">➕ Crear Evento</a>
         </div>
 
         
@@ -166,7 +166,7 @@
 
     private void EditarEvento(int id)
     {
-        Navigation.NavigateTo($"/admin/editar-evento/{id}");
+        Navigation.NavigateTo($"/editar-evento/{id}", true);
     }
 
     private async Task EliminarEvento(int id)

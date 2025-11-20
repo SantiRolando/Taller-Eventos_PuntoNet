@@ -1,4 +1,4 @@
-﻿@page "/admin/editar-evento/{Id:int}"
+﻿@page "/editar-evento/{Id:int}"
 @using Eventos_PuntoNet.Components.Models
 @using Eventos_PuntoNet.Components.Data
 @using Microsoft.EntityFrameworkCore
@@ -6,6 +6,8 @@
 @inject NavigationManager Navigation
 
 @rendermode InteractiveServer
+
+<link href="css/site.css" rel="stylesheet" />
 
 <div class="crear-evento">
 
@@ -182,7 +184,7 @@
         ctx.Eventos.Update(evento);
         await ctx.SaveChangesAsync();
 
-        Navigation.NavigateTo("/admin/GestorCarrera");
+        Navigation.NavigateTo("/GestorCarrera");
     }
 
     private async Task OnImagenSeleccionada(ChangeEventArgs e)

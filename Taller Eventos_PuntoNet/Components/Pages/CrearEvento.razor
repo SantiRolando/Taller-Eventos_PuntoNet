@@ -1,4 +1,5 @@
-﻿@page "/admin/crear-evento"
+﻿@page "/crear-evento"
+
 @using Eventos_PuntoNet.Components.Models
 @using Eventos_PuntoNet.Components.Data
 @using Microsoft.EntityFrameworkCore
@@ -6,7 +7,6 @@
 @inject NavigationManager Nav
 
 @rendermode InteractiveServer
-
 
 
 <div class="crear-evento">
@@ -173,7 +173,7 @@
 
         Console.WriteLine($"Evento '{evento.Nombre}' guardado con {sensores.Count} sensores y '{evento.Cantidad_Kits}' Kits");
 
-        Nav.NavigateTo("/admin/GestorCarrera");
+        Nav.NavigateTo("/GestorCarrera");
     }
 
     
